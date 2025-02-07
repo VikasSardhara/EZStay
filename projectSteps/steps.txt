@@ -1,6 +1,6 @@
 Hello, here are possible steps we can take.
 
-app rundown:
+App rundown:
 
 when customer opens app, sees hotel front page with info on Hotel,
 under a textbox or drop menu to pick date and # of people
