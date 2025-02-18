@@ -1,0 +1,4 @@
+room_id,type,smoking,bed_type,price,image_url,available
+101,Deluxe,No,King,120,img1.jpg,Yes
+102,Premium,Yes,Queen,150,img2.jpg,No
+103,Luxury,No,King,200,img3.jpg,Yes
