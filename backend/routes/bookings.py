@@ -52,8 +52,8 @@ def book_room():
         # Append new booking to CSV
         with open(BOOKINGS_FILE, "a", newline="") as file:
             writer = csv.DictWriter(file, fieldnames=df.columns)
-            if file.tell() == 0:
-                writer.writeheader()  # Write header if the file is new
+            if df.empty:
+                writer.writeheader()  # Write header only if CSV is empty
             writer.writerow(new_booking)
 
         return jsonify({"message": "Booking successful", "booking_id": new_booking_id}), 201
@@ -71,3 +71,28 @@ def get_all_bookings():
         return jsonify({"bookings": df.to_dict(orient="records")})
     except FileNotFoundError:
         return jsonify({"error": "bookings.csv not found"}), 404
+
+@bookings_bp.route("/bookings/<int:user_id>", methods=["GET"])
+def get_user_bookings(user_id):
+    """API to fetch all bookings for a specific user"""
+    try:
+        df = pd.read_csv(BOOKINGS_FILE)
+
+        # Convert user_id column to integers for accurate filtering
+        df["user_id"] = df["user_id"].astype(int)
+
+        # Filter bookings by user_id (Fixed)
+        user_bookings = df[df["user_id"] == user_id]
+
+        if user_bookings.empty:
+            return jsonify({"message": f"No bookings found for user {user_id}"}), 404
+
+        return jsonify({"user_bookings": user_bookings.to_dict(orient="records")})
+
+    except FileNotFoundError:
+        return jsonify({"error": "bookings.csv not found"}), 404
+    except ValueError:
+        return jsonify({"error": "Invalid user_id format"}), 400
+
+
+
