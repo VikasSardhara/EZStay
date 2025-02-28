@@ -2,6 +2,7 @@ import os
 import csv
 import pandas as pd
 from flask import Blueprint, request, jsonify
+import datetime
 
 bookings_bp = Blueprint("bookings", __name__)
 
@@ -16,9 +17,8 @@ if not os.path.exists(BOOKINGS_FILE):
 
 @bookings_bp.route("/book", methods=["POST"])  
 def book_room():
-    """API to book a room"""
+    """API to book a room with availability check and room validation"""
     try:
-        # Get JSON data from request
         data = request.json
         user_id = data.get("user_id")
         room_id = data.get("room_id")
@@ -26,20 +26,37 @@ def book_room():
         check_out_date = data.get("check_out_date")
         num_guests = data.get("num_guests")
 
-        # Validate input
+        # Validate input fields
         if not all([user_id, room_id, check_in_date, check_out_date, num_guests]):
             return jsonify({"error": "Missing required fields"}), 400
 
+        # Load rooms.csv to validate room_id
+        ROOMS_FILE = os.path.join(BASE_DIR, "../data/rooms.csv")
+        if not os.path.exists(ROOMS_FILE):
+            return jsonify({"error": "Rooms data not found"}), 500
+
+        rooms_df = pd.read_csv(ROOMS_FILE)
+
+        # Ensure room_id exists in rooms.csv
+        if room_id not in rooms_df["room_id"].values:
+            return jsonify({"error": f"Room ID {room_id} does not exist"}), 400
+
         # Read existing bookings
-        try:
-            df = pd.read_csv(BOOKINGS_FILE)
-        except FileNotFoundError:
-            df = pd.DataFrame(columns=["booking_id", "user_id", "room_id", "check_in_date", "check_out_date", "num_guests"])
+        df = pd.read_csv(BOOKINGS_FILE)
+
+        # Check if the room is already booked for the selected dates
+        overlapping_bookings = df[
+            (df["room_id"] == room_id) &
+            ((df["check_in_date"] <= check_out_date) & (df["check_out_date"] >= check_in_date))
+        ]
+
+        if not overlapping_bookings.empty:
+            return jsonify({"error": "Room already booked for selected dates"}), 400
 
         # Generate new booking ID
         new_booking_id = 1 if df.empty else int(df["booking_id"].max()) + 1
 
-        # Create new booking dictionary
+        # Create new booking entry
         new_booking = {
             "booking_id": new_booking_id,
             "user_id": user_id,
@@ -49,17 +66,20 @@ def book_room():
             "num_guests": num_guests
         }
 
-        # Append new booking to CSV
+        # Append booking to CSV
         with open(BOOKINGS_FILE, "a", newline="") as file:
             writer = csv.DictWriter(file, fieldnames=df.columns)
             if df.empty:
-                writer.writeheader()  # Write header only if CSV is empty
+                writer.writeheader()
             writer.writerow(new_booking)
 
         return jsonify({"message": "Booking successful", "booking_id": new_booking_id}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
 
 @bookings_bp.route("/bookings", methods=["GET"])
 def get_all_bookings():
@@ -93,6 +113,3 @@ def get_user_bookings(user_id):
         return jsonify({"error": "bookings.csv not found"}), 404
     except ValueError:
         return jsonify({"error": "Invalid user_id format"}), 400
-
-
-
