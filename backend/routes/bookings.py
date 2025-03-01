@@ -113,3 +113,26 @@ def get_user_bookings(user_id):
         return jsonify({"error": "bookings.csv not found"}), 404
     except ValueError:
         return jsonify({"error": "Invalid user_id format"}), 400
+
+@bookings_bp.route("/bookings/<int:booking_id>", methods=["DELETE"])
+def delete_booking(booking_id):
+    """API to cancel (delete) a booking"""
+    try:
+        df = pd.read_csv(BOOKINGS_FILE)
+
+        # Check if booking ID exists
+        if booking_id not in df["booking_id"].values:
+            return jsonify({"error": f"Booking ID {booking_id} not found"}), 404
+
+        # Remove the booking
+        df = df[df["booking_id"] != booking_id]
+
+        # Save updated bookings list
+        df.to_csv(BOOKINGS_FILE, index=False)
+
+        return jsonify({"message": f"Booking {booking_id} cancelled successfully"}), 200
+
+    except FileNotFoundError:
+        return jsonify({"error": "bookings.csv not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
