@@ -1,2 +1,5 @@
-user_id,name,email,password,id_number,dob
-1001,Derrick Kol,dkol@gmail.com,jaoisd,Y192911,08/06/1996
+user_id,name,email,password,id_number,dob,creation_date
+1001,Derrick Kol,dkol@gmail.com,jaoisd,Y192911,08/06/1996,03/04/2025
+1002,Eric Stohl,estohl@gmail.com,iojasdf,U123142,06/17/1990,03/04/2025
+1003,Mary Adams,madams@gmail.com,sjdfasd,J123411,01/12/1998,03/05/2025
+1004,Henry Walter,hwalter@gmail.com,sdfkla,Y781341,05/01/1992,03/05/2025

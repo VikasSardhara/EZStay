@@ -2,6 +2,7 @@ import os
 import csv
 import pandas as pd
 from flask import Blueprint, request, jsonify
+from datetime import date
 
 users_bp = Blueprint("users", __name__)
 # Absolute path for CSV file
@@ -30,7 +31,7 @@ def register_user():
 
         # Check if the file exists and is not empty
         if os.stat(USERS_FILE).st_size == 0:
-            df = pd.DataFrame(columns=["user_id", "name", "email", "password", "id_number", "dob"])
+            df = pd.DataFrame(columns=["user_id", "name", "email", "password", "id_number", "dob", "creation_date"])
         else:
             df = pd.read_csv(USERS_FILE)
 
@@ -41,18 +42,20 @@ def register_user():
         # Generate new user ID
         new_user_id = 1001 if df.empty else int(df["user_id"].max()) + 1    
 
+        #Create new user entry
         new_user = {
             "user_id": new_user_id,
             "name": name,
             "email": email,
             "password": password,
             "id_number": id_number,
-            "dob": dob
+            "dob": dob,
+            "creation_date": date.today().strftime('%m/%d/%Y')
         }
 
         # Append user to CSV
         with open(USERS_FILE, "a", newline="") as file:
-            writer = csv.DictWriter(file, fieldnames=["user_id", "name", "email", "password", "id_number", "dob"])
+            writer = csv.DictWriter(file, fieldnames=df.columns)
             if df.empty:
                 writer.writeheader()  # Write headers if file is empty
             writer.writerow(new_user)
@@ -61,3 +64,14 @@ def register_user():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@users_bp.route("/users", methods=["GET"])
+def get_all_users():
+    """API to fetch all users"""
+    try:
+        df = pd.read_csv(USERS_FILE)
+        if df.empty:
+            return jsonify({"message": "No users found"}), 404
+        return jsonify({"users": df.to_dict(orient="records")})
+    except FileNotFoundError:
+        return jsonify({"error": "users.csv not found"}), 404
