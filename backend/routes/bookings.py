@@ -54,7 +54,7 @@ def book_room():
             return jsonify({"error": "Room already booked for selected dates"}), 400
 
         # Generate new booking ID
-        new_booking_id = 1 if df.empty else int(df["booking_id"].max()) + 1
+        new_booking_id = 1001 if df.empty else int(df["booking_id"].max()) + 1
 
         # Create new booking entry
         new_booking = {
