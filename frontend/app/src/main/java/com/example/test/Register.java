@@ -29,7 +29,7 @@ public class Register extends AppCompatActivity {
     ProgressBar progressBar;
 
     FirebaseAuth mAuth;
-    TextView loginNow;
+    TextView loginButton;
     TextInputEditText editTextDOB;
 
 
@@ -45,7 +45,7 @@ public class Register extends AppCompatActivity {
         editTextDOB = findViewById(R.id.dob_input);
         nextButton = findViewById(R.id.next_button);
         mAuth = FirebaseAuth.getInstance();
-        loginNow = findViewById(R.id.continue_login);
+        loginButton = findViewById(R.id.continue_login);
 
         editTextDOB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,9 +68,9 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(), Register.class);
+                Intent intent = new Intent(getApplicationContext(), Register2.class);
                 String firstNameText = String.valueOf(editTextfirstName.getText());
-                String lastNameText = String.valueOf(editTextfirstName.getText());
+                String lastNameText = String.valueOf(editTextlastName.getText()); //was double first name
                 String email = String.valueOf(editTextEmail.getText());
                 String dob = String.valueOf(editTextDOB.getText());
 
@@ -88,6 +88,14 @@ public class Register extends AppCompatActivity {
                 intent.putExtra("last_name", lastNameText);
                 intent.putExtra("email", email);
                 intent.putExtra("dob", dob);
+                startActivity(intent);
+                finish();
+            }
+        });
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Login.class);
                 startActivity(intent);
                 finish();
             }

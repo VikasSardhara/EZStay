@@ -1,5 +1,8 @@
-user_id,name,email,password,id_number,dob,creation_date
-1001,Derrick Kol,dkol@gmail.com,jaoisd,Y192911,08/06/1996,03/04/2025
-1002,Eric Stohl,estohl@gmail.com,iojasdf,U123142,06/17/1990,03/04/2025
-1003,Mary Adams,madams@gmail.com,sjdfasd,J123411,01/12/1998,03/05/2025
-1004,Henry Walter,hwalter@gmail.com,sdfkla,Y781341,05/01/1992,03/05/2025
+user_id,name,email,dob,creation_date
+1001,dadad dadad,mouse@gmail.com,3/22/2025,03/22/2025
+1002,Jeff Jeff,jeffery@gmail.com,3/22/2025,03/22/2025
+1003,wd wd,k@gmail.com,3/22/2025,03/22/2025
+1004,first last,first@gmail.com,3/29/2025,03/22/2025
+1005,need sleep,sleep@gmail.com,3/22/1944,03/22/2025
+1006,Edward Hooper,hoop@gmail.com,4/1/2017,03/25/2025
+1007,ved starkas,vedstarks@gmail.com,3/10/2025,03/25/2025

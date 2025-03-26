@@ -36,6 +36,7 @@ public class Login extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     TextView continueGuest;
+    FirebaseUser user;
 
 
     @Override
@@ -74,10 +75,9 @@ public class Login extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     progressBar.setVisibility(View.GONE);
-                                    Log.d(TAG, "signInWithEmail:success");
+                                    Toast.makeText(Login.this, "Successfully signed in!.", Toast.LENGTH_SHORT).show();
                                     FirebaseUser user = mAuth.getCurrentUser();
-
-                                    Intent intent = new Intent(getApplicationContext(), Payment.class);
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
@@ -97,12 +97,10 @@ public class Login extends AppCompatActivity {
             }
         });
 
-
-
         continueGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Payment.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 finish();
             }

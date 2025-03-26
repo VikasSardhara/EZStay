@@ -11,7 +11,7 @@ USERS_FILE = os.path.join(BASE_DIR, "../data/users.csv")
 
 # Ensure users.csv exists with proper headers
 if not os.path.exists(USERS_FILE):
-    df = pd.DataFrame(columns=["user_id", "name", "email", "password", "id_number", "dob"])
+    df = pd.DataFrame(columns=["user_id", "name", "email", "dob"])
     df.to_csv(USERS_FILE, index=False)
 
 @users_bp.route("/register", methods=["POST"])
@@ -21,17 +21,15 @@ def register_user():
         data = request.json
         name = data.get("name")
         email = data.get("email")
-        password = data.get("password")
-        id_number = data.get("id_number")
         dob = data.get("dob")
 
         # Validate input fields
-        if not all([name, email, password, id_number, dob]):
+        if not all([name, email, dob]):
             return jsonify({"error": "Missing required fields"}), 400
 
         # Check if the file exists and is not empty
         if os.stat(USERS_FILE).st_size == 0:
-            df = pd.DataFrame(columns=["user_id", "name", "email", "password", "id_number", "dob", "creation_date"])
+            df = pd.DataFrame(columns=["user_id", "name", "email", "dob", "creation_date"])
         else:
             df = pd.read_csv(USERS_FILE)
 
@@ -47,8 +45,6 @@ def register_user():
             "user_id": new_user_id,
             "name": name,
             "email": email,
-            "password": password,
-            "id_number": id_number,
             "dob": dob,
             "creation_date": date.today().strftime('%m/%d/%Y')
         }
@@ -75,3 +71,4 @@ def get_all_users():
         return jsonify({"users": df.to_dict(orient="records")})
     except FileNotFoundError:
         return jsonify({"error": "users.csv not found"}), 404
+    
