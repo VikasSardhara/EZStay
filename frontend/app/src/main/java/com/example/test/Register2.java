@@ -70,7 +70,7 @@ public class Register2 extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     Log.d(TAG, "createUserWithEmail:success");
                                     Toast.makeText(Register2.this, "Successfully Created ", Toast.LENGTH_SHORT).show();
-                                    userSendData sendData = new userSendData(firstNameText, lastNameText, dob, email);
+                                    User sendData = new User(firstNameText, lastNameText, dob, email);
                                     Thread thread = new Thread(sendData);
                                     thread.start();
                                 } else {

@@ -28,17 +28,17 @@ public class AccountInfo extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_account_info);
 
-        // Fix: Ensure the main view exists before applying window insets
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Fix: Move Firebase authentication and UI initialization outside the insets listener
+
         auth = FirebaseAuth.getInstance();
         logout_button = findViewById(R.id.logout_button);
-        textView = findViewById(R.id.user_details);
+       // textView = findViewById(R.id.user_details);
         user = auth.getCurrentUser();
 
         if (user != null) {
@@ -46,6 +46,8 @@ public class AccountInfo extends AppCompatActivity {
         } else {
             textView.setText("No user signed in");
         }
+
+
 
         logout_button.setOnClickListener(new View.OnClickListener() {
             @Override
