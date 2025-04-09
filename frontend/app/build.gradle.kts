@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.test"
+    namespace = "com.example.homepage"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.test"
+        applicationId = "com.example.homepage"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -34,24 +34,21 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(libs.firebase.auth)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
-    implementation(libs.core.ktx)
+    implementation(libs.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.firebase.auth)
 
     implementation("com.stripe:stripe-android:21.5.1")
     implementation("com.stripe:stripe-android:21.6.0")

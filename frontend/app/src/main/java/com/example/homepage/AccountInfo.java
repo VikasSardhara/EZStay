@@ -1,0 +1,63 @@
+package com.example.homepage;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.example.homepage.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+public class AccountInfo extends AppCompatActivity {
+
+    FirebaseAuth auth;
+    FirebaseUser user;
+    Button logout_button;
+    TextView textView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_account_info);
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+
+        auth = FirebaseAuth.getInstance();
+        logout_button = findViewById(R.id.logout_button);
+        // textView = findViewById(R.id.user_details);
+        user = auth.getCurrentUser();
+
+        if (user != null) {
+            textView.setText(user.getEmail());
+        } else {
+            textView.setText("No user signed in");
+        }
+
+
+
+        logout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(AccountInfo.this, com.example.homepage.REGISTERLOGIN.Login.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+    }
+}
