@@ -27,6 +27,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 
 public class Login extends AppCompatActivity {
 
@@ -79,6 +80,18 @@ public class Login extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     Toast.makeText(Login.this, "Successfully signed in!.", Toast.LENGTH_SHORT).show();
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    user.getIdToken(true)
+                                            .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                                                public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                                    if (task.isSuccessful()) {
+                                                        String idToken = task.getResult().getToken();
+                                                        //send token to backend
+
+                                                    } else {
+                                                        // Handle error -> task.getException();
+                                                    }
+                                                }
+                                            });
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();

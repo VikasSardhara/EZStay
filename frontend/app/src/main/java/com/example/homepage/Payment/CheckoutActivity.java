@@ -1,4 +1,4 @@
-package com.example.test;
+package com.example.homepage.Payment;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +30,7 @@ public class CheckoutActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         paymentSheet = new PaymentSheet(this, this::onPaymentSheetResult); //callback to method presentPaymentSheet
-        Fuel.INSTANCE.post("http://10.0.2.2:5000/payment-sheet", null).responseString(new Handler<String>() { //use if on computer http://192.168.1.162:5000/payment-sheet
+        Fuel.INSTANCE.post("http://10.0.2.2:5000/payment-sheet", null).responseString(new Handler<String>() { //use if on emulator "http://10.0.2.2:5000/payment-sheet" use http://192.168.1.162:5000" if android
             @Override
             public void success(String s) {
                 try {

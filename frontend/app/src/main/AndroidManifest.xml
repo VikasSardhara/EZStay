@@ -19,6 +19,9 @@
             android:name=".Payment.Checkout"
             android:exported="false" />
         <activity
+            android:name=".Payment.CheckoutActivity"
+            android:exported="false" />
+        <activity
             android:name=".REGISTERLOGIN.Login"
             android:exported="false" />
         <activity

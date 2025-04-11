@@ -33,7 +33,7 @@ public class Checkout extends AppCompatActivity {
         pay_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Checkout.this, com.example.test.CheckoutActivity.class);
+                Intent i = new Intent(Checkout.this, com.example.homepage.Payment.CheckoutActivity.class);
                 startActivity(i);
                 finish();
             }

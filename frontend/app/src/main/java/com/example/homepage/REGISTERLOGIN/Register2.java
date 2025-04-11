@@ -73,8 +73,7 @@ public class Register2 extends AppCompatActivity {
                                     Log.d(TAG, "createUserWithEmail:success");
                                     Toast.makeText(Register2.this, "Successfully Created ", Toast.LENGTH_SHORT).show();
                                     User sendData = new User(firstNameText, lastNameText, dob, email);
-                                    Thread thread = new Thread(sendData);
-                                    thread.start();
+                                    sendData.registerUser();
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     progressBar.setVisibility(View.GONE);

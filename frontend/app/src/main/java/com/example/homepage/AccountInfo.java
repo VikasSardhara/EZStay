@@ -7,14 +7,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.homepage.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 
 public class AccountInfo extends AppCompatActivity {
 
@@ -37,10 +41,19 @@ public class AccountInfo extends AppCompatActivity {
         });
 
 
-        auth = FirebaseAuth.getInstance();
-        logout_button = findViewById(R.id.logout_button);
-        // textView = findViewById(R.id.user_details);
-        user = auth.getCurrentUser();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        user.getIdToken(true) //if user is logged in
+                .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                    public void onComplete(@NonNull Task<GetTokenResult> task) {
+                        if (task.isSuccessful()) {
+                            String idToken = task.getResult().getToken();
+                            // Send token to your backend via HTTPS
+                            // ...
+                        } else {
+                            // Handle error -> task.getException();
+                        }
+                    }
+                });
 
         if (user != null) {
             textView.setText(user.getEmail());

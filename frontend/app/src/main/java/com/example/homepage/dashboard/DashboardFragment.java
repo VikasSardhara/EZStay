@@ -1,5 +1,6 @@
 package com.example.homepage.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.homepage.R;
 import com.example.homepage.cart.CartFragment;
+import com.example.homepage.ui.dashboard.DashboardViewModel;
 import com.example.homepage.utils.ConfirmedBookingManager;
 
 import java.text.SimpleDateFormat;
@@ -58,6 +60,16 @@ public class DashboardFragment extends Fragment {
 
             TextView tvDetails = card.findViewById(R.id.tvReservationDetails);
             Button btnPay = card.findViewById(R.id.btnPayment);
+
+            btnPay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(requireContext(), com.example.homepage.Payment.Checkout.class);
+                    startActivity(i);
+                }
+            });
+
+
             Button btnRemove = card.findViewById(R.id.btnRemove);
 
             tvDetails.setText(
@@ -87,4 +99,7 @@ public class DashboardFragment extends Fragment {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+
+
 }

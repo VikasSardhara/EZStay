@@ -1,5 +1,6 @@
 package com.example.homepage.cart;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,8 +91,12 @@ public class CartFragment extends Fragment {
                 displayCartItems(); // Refresh UI
             });
 
-            btnPay.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Redirecting to payment... (Not implemented)", Toast.LENGTH_SHORT).show();
+            btnPay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(requireContext(), com.example.homepage.Payment.Checkout.class);
+                    startActivity(i);
+                }
             });
 
             cartContainer.addView(card);
