@@ -14,9 +14,19 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.homepage.R;
 import com.example.homepage.cart.CartFragment;
 import com.example.homepage.utils.BookingCart;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -39,7 +49,6 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Initialize views
         Button btnCheckInDate = view.findViewById(R.id.btnCheckInDate);
         Button btnCheckOutDate = view.findViewById(R.id.btnCheckOutDate);
         tvCheckInDate = view.findViewById(R.id.tvCheckInDate);
@@ -73,7 +82,7 @@ public class HomeFragment extends Fragment {
         });
 
         btnBookNow.setOnClickListener(v -> {
-            // Validations
+            // Input validations
             if (checkInCalendar == null || checkOutCalendar == null) {
                 Toast.makeText(getContext(), "Please select check-in and check-out dates.", Toast.LENGTH_SHORT).show();
                 return;
@@ -101,26 +110,58 @@ public class HomeFragment extends Fragment {
                 return;
             }
 
-            String roomType = rbKing.isChecked() ? "King" : "2 Queens";
+            // ✅ Construct backend request
+            String roomType = rbKing.isChecked() ? "King" : "Queen";
             String smokingPref = rbSmoking.isChecked() ? "Smoking" : "Non-Smoking";
 
-            BookingCart.Reservation booking = new BookingCart.Reservation(
-                    checkInCalendar.getTime(),
-                    checkOutCalendar.getTime(),
-                    roomType,
-                    smokingPref,
-                    guestCount
-            );
+            String url = "http://10.0.2.2:5000/rooms?size=" + roomType + "&type=" + smokingPref + "&guests=" + guestCount;
 
-            BookingCart.addItem(booking);
+            RequestQueue queue = Volley.newRequestQueue(requireContext());
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONArray rooms = response.getJSONArray("rooms");
+                                if (rooms.length() > 0) {
+                                    JSONObject firstRoom = rooms.getJSONObject(0);
+                                    int roomId = firstRoom.getInt("room_id");
 
-            Toast.makeText(getContext(), "Booking added to cart.", Toast.LENGTH_SHORT).show();
+                                    // Add booking to cart
+                                    BookingCart.Reservation booking = new BookingCart.Reservation(
+                                            checkInCalendar.getTime(),
+                                            checkOutCalendar.getTime(),
+                                            roomType,
+                                            smokingPref,
+                                            guestCount
+                                    );
 
-            // Navigate to Cart
-            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, new CartFragment());
-            transaction.addToBackStack(null);
-            transaction.commit();
+                                    BookingCart.addItem(booking);
+                                    Toast.makeText(getContext(), "Booking added to cart.", Toast.LENGTH_SHORT).show();
+
+                                    // Navigate to Cart
+                                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.fragment_container, new CartFragment());
+                                    transaction.addToBackStack(null);
+                                    transaction.commit();
+
+                                } else {
+                                    Toast.makeText(getContext(), "No rooms available.", Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getContext(), "Error parsing response.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+            queue.add(request);
         });
 
         return view;
@@ -140,20 +181,6 @@ public class HomeFragment extends Fragment {
                         checkOutCalendar = calendar;
                     }
 
-                    if (checkInCalendar != null && checkOutCalendar != null) {
-                        if (checkOutCalendar.before(checkInCalendar)) {
-                            Toast.makeText(getContext(), "Check-out must be after check-in.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        long diff = checkOutCalendar.getTimeInMillis() - checkInCalendar.getTimeInMillis();
-                        long days = diff / (1000 * 60 * 60 * 24);
-                        if (days > 30) {
-                            Toast.makeText(getContext(), "Max booking is 30 days.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-
                     updateDateText();
                 },
                 calendar.get(Calendar.YEAR),
@@ -162,7 +189,6 @@ public class HomeFragment extends Fragment {
         );
 
         if (isCheckIn) {
-            // ❗️ Disable selection of past dates for check-in
             dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         } else if (checkInCalendar != null) {
             dialog.getDatePicker().setMinDate(checkInCalendar.getTimeInMillis() + 24 * 60 * 60 * 1000); // +1 day
