@@ -161,8 +161,11 @@ public class HomeFragment extends Fragment {
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
 
-        if (!isCheckIn && checkInCalendar != null) {
-            dialog.getDatePicker().setMinDate(checkInCalendar.getTimeInMillis() + 24 * 60 * 60 * 1000);
+        if (isCheckIn) {
+            // ❗️ Disable selection of past dates for check-in
+            dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+        } else if (checkInCalendar != null) {
+            dialog.getDatePicker().setMinDate(checkInCalendar.getTimeInMillis() + 24 * 60 * 60 * 1000); // +1 day
         }
 
         dialog.show();
