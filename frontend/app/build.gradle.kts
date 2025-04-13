@@ -53,6 +53,7 @@ dependencies {
     implementation("com.stripe:stripe-android:21.5.1")
     implementation("com.stripe:stripe-android:21.6.0")
     implementation("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation("com.android.volley:volley:1.2.1")
 
     // Include the financial connections SDK to support US bank account as a payment method
     implementation("com.stripe:financial-connections:21.6.0")
