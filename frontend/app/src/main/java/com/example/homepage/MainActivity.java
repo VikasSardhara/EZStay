@@ -18,7 +18,6 @@ import com.example.homepage.notifications.NotificationsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button testBtn;
 
 
     @Override
@@ -26,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_home);
 
-        testBtn = findViewById(R.id.button);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
@@ -59,15 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 return true;
-            }
-        });
-
-        testBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, Register.class);
-                startActivity(i);
-                finish();
             }
         });
 

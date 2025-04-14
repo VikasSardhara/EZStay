@@ -3,16 +3,13 @@ package com.example.homepage;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import java.io.Serializable;
 
-import androidx.annotation.NonNull;
 
 import com.example.homepage.REGISTERLOGIN.Login;
 import com.example.homepage.REGISTERLOGIN.Register;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
+
 
 import org.json.JSONObject;
 
@@ -20,17 +17,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-public class User {
+public class User implements Serializable{
 
     private String firstName;
     private String lastName;
     private String dob;
     private String email;
-
     private String token;
-
 
     public User(String firstName, String lastName, String dob, String email) {
         this.firstName = firstName;
@@ -44,7 +40,6 @@ public class User {
             @Override
             public void run() {
                 HttpURLConnection urlConnection = null;
-
                 try {
                     URL url = new URL("http://127.0.0.1:5000/register"); // Change to 10.0.2.2 if using an emulator
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -82,17 +77,15 @@ public class User {
         }).start();
     }
 
-    public void getUserInfo(final String idToken) {
+    public void getUserInfo(final String email, final UserInfoCallback callback) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("http://127.0.0.1:5000/users");
+                    URL url = new URL("http://127.0.0.1:5000/users/" + URLEncoder.encode(email, StandardCharsets.UTF_8));
                     urlConnection = (HttpURLConnection) url.openConnection();
-
                     urlConnection.setRequestMethod("GET");
-                    urlConnection.setRequestProperty("Authorization", "Bearer " + idToken);
                     urlConnection.setConnectTimeout(5000);
                     urlConnection.setReadTimeout(5000);
 
@@ -105,19 +98,23 @@ public class User {
 
                         JSONObject jsonObject = new JSONObject(jsonResponse);
 
-                        String name = jsonObject.getString("name");
+                        String fullName = jsonObject.getString("name");
+                        String[] name_split = fullName.split(" ");
+                        String firstname = name_split[0];
+                        String lastname = name_split[1];
+
                         String dob = jsonObject.getString("dob");
                         String email = jsonObject.getString("email");
 
-                        Log.d("t", name);
+                        User user = new User(firstname, lastname, dob, email);
+                        callback.onUserInfoReceived(user);
 
                     } else {
-                        System.out.println("Error: Unable to retrieve user info. Response code: " + responseCode);
+                        Log.e("Error", "Unable to retrieve user info. Response code: " + responseCode);
                     }
 
                 } catch (Exception e) {
                     Log.e("Error", "Failed to get data: " + e.getMessage());
-
                 } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
@@ -127,7 +124,45 @@ public class User {
         }).start();
     }
 
+    public void getBooking(final String uID, final UserInfoCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection = null;
+                try {
+                    URL url = new URL("http://127.0.0.1:5000/bookings/" + URLEncoder.encode(uID, StandardCharsets.UTF_8));
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.setRequestProperty("Authorization", "Bearer " + token); // Use Firebase token here
+                    urlConnection.setConnectTimeout(5000);
+                    urlConnection.setReadTimeout(5000);
 
+                    int responseCode = urlConnection.getResponseCode();
+
+                    if (responseCode == 200) {
+                        InputStream is = urlConnection.getInputStream();
+                        byte[] bytes = is.readAllBytes();
+                        String jsonResponse = new String(bytes, StandardCharsets.UTF_8);
+
+                        JSONObject jsonObject = new JSONObject(jsonResponse);
+
+                        int bookingID = jsonObject.getInt("booking_id");
+                        int roomID = jsonObject.getInt("room_id");
+
+                    } else {
+                        Log.e("Error", "Unable to retrieve user info. Response code: " + responseCode);
+                    }
+
+                } catch (Exception e) {
+                    Log.e("Error", "Failed to get data: " + e.getMessage());
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
 
     public static void checkIfLoggedIn(final FirebaseUser user, final Context context) {
         if (user != null) {
@@ -145,10 +180,29 @@ public class User {
         }
     }
 
+    // Get the full name of the user
     public String getName() {
+        return firstName + " " + lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getDob() {
         return dob;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
-
+    // Callback interface for passing user info
+    public interface UserInfoCallback {
+        void onUserInfoReceived(User user);
+    }
 }
