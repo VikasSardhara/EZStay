@@ -39,14 +39,21 @@ public class Login extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     TextView continueGuest;
-    FirebaseUser user;
-
+    FirebaseUser mUser;
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+
+        auth = FirebaseAuth.getInstance();
+        mUser = auth.getCurrentUser();
+
+        if(mUser != null){
+
+        }
 
         loginButton = findViewById(R.id.login_button);
         editTextEmail = findViewById(R.id.email);

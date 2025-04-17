@@ -17,7 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.homepage.R;
-import com.example.homepage.User;
+import com.example.homepage.USER.User;
+import com.example.homepage.USER.UserRegister;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -72,8 +73,7 @@ public class Register2 extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     Log.d(TAG, "createUserWithEmail:success");
                                     Toast.makeText(Register2.this, "Successfully Created ", Toast.LENGTH_SHORT).show();
-                                    User sendData = new User(firstNameText, lastNameText, dob, email);
-                                    sendData.registerUser();
+                                    UserRegister.registerUser(firstNameText, lastNameText, dob, email, 0);
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     progressBar.setVisibility(View.GONE);

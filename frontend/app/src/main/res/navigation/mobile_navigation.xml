@@ -22,4 +22,9 @@
         android:name="com.example.homepage.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <activity
+        android:id="@+id/accountInfo"
+        android:name="com.example.homepage.Profile.AccountInfo"
+        android:label="activity_account_info"
+        tools:layout="@layout/activity_account_info" />
 </navigation>

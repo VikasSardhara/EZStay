@@ -40,5 +40,5 @@ app.post('/payment-sheet', async (req, res) => {
 
 console.log('Starting server...');
 app.listen(port, () => {
-  console.log(`Server running at http://127.0.0.1:${port}`);
+  console.log(`Server running at ${port}`);
 });
