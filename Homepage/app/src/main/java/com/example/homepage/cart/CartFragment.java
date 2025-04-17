@@ -1,5 +1,6 @@
 package com.example.homepage.cart;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,9 @@ import com.example.homepage.R;
 import com.example.homepage.dashboard.DashboardFragment;
 import com.example.homepage.utils.BookingCart;
 import com.example.homepage.utils.ConfirmedBookingManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +40,6 @@ public class CartFragment extends Fragment {
 
         displayCartItems();
 
-        // Handle back button manually to go to DashboardFragment
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -61,6 +63,7 @@ public class CartFragment extends Fragment {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
         for (BookingCart.Reservation res : items) {
             View card = inflater.inflate(R.layout.item_cart_reservation, cartContainer, false);
@@ -74,28 +77,37 @@ public class CartFragment extends Fragment {
                     + "Smoking: " + res.getSmokingPreference() + "\n"
                     + "Guests: " + res.getGuestCount() + "\n"
                     + "Check-in: " + sdf.format(res.getCheckInDate()) + "\n"
-                    + "Check-out: " + sdf.format(res.getCheckOutDate());
+                    + "Check-out: " + sdf.format(res.getCheckOutDate()) + "\n"
+                    + "Price: " + currencyFormat.format(res.getPrice());
 
             tvDetails.setText(info);
 
             btnRemove.setOnClickListener(v -> {
                 BookingCart.removeItem(res);
-                displayCartItems(); // Refresh
+                highlightDashboardTab();
+                navigateToDashboard();
             });
 
             btnConfirm.setOnClickListener(v -> {
-                BookingCart.removeItem(res); // ✅ Remove FIRST
-                ConfirmedBookingManager.confirmBooking(res); // ✅ Then confirm
+                BookingCart.removeItem(res);
+                ConfirmedBookingManager.confirmBooking(res);
                 Toast.makeText(getContext(), "Booking confirmed!", Toast.LENGTH_SHORT).show();
-                displayCartItems(); // Refresh UI
+                highlightDashboardTab();
+                navigateToDashboard();
             });
 
             btnPay.setOnClickListener(v -> {
+                highlightDashboardTab();
                 Toast.makeText(getContext(), "Redirecting to payment... (Not implemented)", Toast.LENGTH_SHORT).show();
             });
 
             cartContainer.addView(card);
         }
+    }
+
+    private void highlightDashboardTab() {
+        BottomNavigationView navView = requireActivity().findViewById(R.id.bottomNavigationView);
+        navView.setSelectedItemId(R.id.nav_dashboard);
     }
 
     private void navigateToDashboard() {
