@@ -40,4 +40,8 @@ public class ConfirmedBookingManager {
     public static void clearConfirmedBookings() {
         confirmedBookings.clear();
     }
+
+    public static void removeReservation(BookingCart.Reservation reservation) {
+        confirmedBookings.removeIf(confirmed -> confirmed.getReservation().equals(reservation));
+    }
 }
