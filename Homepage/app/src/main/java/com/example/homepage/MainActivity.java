@@ -1,32 +1,30 @@
 package com.example.homepage;
 
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.homepage.REGISTERLOGIN.Register;
 import com.example.homepage.dashboard.DashboardFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-
 import com.example.homepage.home.HomeFragment;
 import com.example.homepage.notifications.NotificationsFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.view.MenuItem;
+// import android.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
+
 
 public class MainActivity extends AppCompatActivity {
-
-    Button testBtn;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_home);
 
-        testBtn = findViewById(R.id.button);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle("EZStay");
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
@@ -42,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment selectedFragment = null;
 
-                // Use if-else instead of switch
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_home) {
                     selectedFragment = new HomeFragment();
@@ -61,16 +58,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        testBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, Register.class);
-                startActivity(i);
-                finish();
-            }
-        });
-
-
     }
 }
