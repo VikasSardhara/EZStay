@@ -70,7 +70,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_layout"
-        app:layout_constraintVertical_bias="0.826" />
+        app:layout_constraintVertical_bias="0.901" />
 
     <Button
         android:id="@+id/login_button"
@@ -91,25 +91,32 @@
         android:text="Register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+<<<<<<< HEAD
         app:layout_constraintHorizontal_bias="1.0"
+=======
+        app:layout_constraintHorizontal_bias="0.89"
+>>>>>>> c3f3a90 (WIP: saving my local changes before rebase)
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.686" />
 
-    <TextView
+    <Button
         android:id="@+id/continue_guest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Continue as Guest"
-        android:textSize="20dp"
+        android:text="@string/continue_as_guest"
+        android:textSize="20sp"
         android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.818" />;
-    />
+        app:layout_constraintTop_toBottomOf="@+id/register_button"
+        />
 
 
 

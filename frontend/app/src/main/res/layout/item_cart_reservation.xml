@@ -3,44 +3,62 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:background="@android:color/white"
-    android:layout_margin="8dp"
-    android:elevation="2dp">
+    android:padding="16dp"
+    android:background="@drawable/card_bg"
+    android:layout_marginBottom="12dp">
 
     <TextView
         android:id="@+id/tvReservationDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Reservation details"
-        android:textSize="16sp"
-        android:textColor="@android:color/black" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvReservationPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Price: king $100 and Queens $140"
+        android:textStyle="bold"
+        android:textColor="#4CAF50"
+        android:paddingBottom="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="end"
-        android:layout_marginTop="8dp">
+        android:gravity="center"
+        android:layout_marginTop="4dp">
 
         <Button
             android:id="@+id/btnRemove"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Remove" />
+            android:layout_weight="1"
+            android:text="REMOVE"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="4dp" />
 
         <Button
             android:id="@+id/btnConfirmBooking"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Confirm"
-            android:layout_marginStart="8dp"/>
+            android:layout_weight="1"
+            android:text="CONFIRM"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="4dp" />
 
         <Button
             android:id="@+id/btnPayment"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Payment"
-            android:layout_marginStart="8dp"/>
+            android:layout_weight="1"
+            android:text="PAYMENT"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white" />
     </LinearLayout>
+
 </LinearLayout>

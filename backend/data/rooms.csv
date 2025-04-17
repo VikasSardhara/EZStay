@@ -1,5 +1,4 @@
 room_id,size,type
 101,King,Non-Smoking
 102,Queen,Smoking
-103,King,Smoking
-104,Queen,Non-Smoking
+103,Queen,Smoking
