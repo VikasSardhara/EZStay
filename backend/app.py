@@ -3,6 +3,7 @@ from flask_cors import CORS
 from routes.rooms import rooms_bp
 from routes.bookings import bookings_bp
 from routes.users import users_bp
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -16,6 +17,9 @@ app.register_blueprint(users_bp)
 def home():
     return jsonify({"message": "EZStay Backend API is running!"})
 
+
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
+
     
