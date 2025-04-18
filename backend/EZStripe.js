@@ -2,7 +2,7 @@ const express = require('express');
 const stripe = require('stripe')('sk_test_51R65YnFQK7HmrpDOZ8MhB8waSHJG8dnhtt4oJGfiaFbhRW79rQ3dyz42r6GQkvd54jxQyl0en2pq13btXYQxuX0B008fDthRBe');
 
 const app = express();
-const port = 5000;
+const port = 4242;
 
 app.use(express.json());
 

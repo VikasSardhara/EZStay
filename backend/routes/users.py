@@ -1,3 +1,15 @@
+"""
+users.py
+
+This file manages user registration and retrieval logic.
+
+It handles adding new users to users.csv, ensuring email uniqueness,
+and retrieving all registered users.
+
+Author: EZStay Backend Team
+Date: April 2025
+"""
+
 import os
 import csv
 import pandas as pd
@@ -16,6 +28,21 @@ if not os.path.exists(USERS_FILE):
 
 @users_bp.route("/register", methods=["POST"])
 def register_user():
+
+    """
+    Registers a new user and stores the data in users.csv.
+
+    Request JSON:
+        {
+            "name": str,
+            "email": str,
+            "dob": str (YYYY-MM-DD)
+        }
+
+    Returns:
+        JSON: Success message with user_id or error message.
+    """
+
     """API to register a new user"""
     try:
         data = request.json
@@ -63,6 +90,14 @@ def register_user():
 
 @users_bp.route("/users", methods=["GET"])
 def get_all_users():
+
+    """
+    Retrieves a list of all registered users from users.csv.
+
+    Returns:
+        JSON: List of users or 404 message if empty.
+    """
+
     """API to fetch all users"""
     try:
         df = pd.read_csv(USERS_FILE)

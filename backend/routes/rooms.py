@@ -1,3 +1,16 @@
+"""
+rooms.py
+
+This file handles room filtering and availability checking.
+
+It reads data from rooms.csv and uses optional filters (size, smoking, guest count),
+while also excluding rooms that are temporarily locked.
+
+Author: EZStay Backend Team
+Date: April 2025
+"""
+
+
 import os
 from flask import Blueprint, request, jsonify
 import pandas as pd
@@ -10,9 +23,37 @@ ROOMS_FILE = os.path.join(BASE_DIR, "../data/rooms.csv")
 LOCKS_FILE = os.path.join(BASE_DIR, "../data/cart_locks.csv")
 
 def dates_overlap(start1, end1, start2, end2):
+    
+    """
+    Checks if two date ranges overlap.
+
+    Args:
+        start1 (date): Start of range 1.
+        end1 (date): End of range 1.
+        start2 (date): Start of range 2.
+        end2 (date): End of range 2.
+
+    Returns:
+        bool: True if ranges overlap, False otherwise.
+    """
+
     return start1 < end2 and start2 < end1
 
 def room_locked(room_id, check_in, check_out):
+
+    """
+    Checks if a room is locked in cart_locks.csv during the requested dates.
+
+    Args:
+        room_id (str or int): Room ID to check.
+        check_in (date): Requested check-in date.
+        check_out (date): Requested check-out date.
+
+    Returns:
+        bool: True if the room is locked, False otherwise.
+    """
+
+
     if not os.path.exists(LOCKS_FILE):
         return False
 
@@ -27,6 +68,23 @@ def room_locked(room_id, check_in, check_out):
 
 @rooms_bp.route("/rooms", methods=["GET"])
 def get_filtered_rooms():
+
+    """
+    Filters available rooms based on size, smoking type, guest count,
+    and availability (excluding locked rooms).
+
+    Query Parameters (optional):
+        size (str): 'King' or 'Queen'
+        type (str): 'Smoking' or 'Non-Smoking'
+        guests (int): Number of guests
+        check_in (str): YYYY-MM-DD
+        check_out (str): YYYY-MM-DD
+
+    Returns:
+        JSON: List of rooms matching the filters.
+    """
+
+
     try:
         if not os.path.exists(ROOMS_FILE):
             return jsonify({"error": "rooms.csv not found"}), 404
