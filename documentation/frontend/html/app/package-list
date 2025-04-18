@@ -1,0 +1,113 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.example.homepage.Payment////PointingToDeclaration/app/com.example.homepage.Payment/index.html
+$dokka.location:com.example.homepage.Payment/Checkout///PointingToDeclaration/app/com.example.homepage.Payment/-checkout/index.html
+$dokka.location:com.example.homepage.Payment/Checkout/Checkout/#/PointingToDeclaration/app/com.example.homepage.Payment/-checkout/-checkout.html
+$dokka.location:com.example.homepage.Payment/CheckoutActivity///PointingToDeclaration/app/com.example.homepage.Payment/-checkout-activity/index.html
+$dokka.location:com.example.homepage.Payment/CheckoutActivity/CheckoutActivity/#/PointingToDeclaration/app/com.example.homepage.Payment/-checkout-activity/-checkout-activity.html
+$dokka.location:com.example.homepage.REGISTERLOGIN////PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/index.html
+$dokka.location:com.example.homepage.REGISTERLOGIN/GuestFormActivity///PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/-guest-form-activity/index.html
+$dokka.location:com.example.homepage.REGISTERLOGIN/GuestFormActivity/GuestFormActivity/#/PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/-guest-form-activity/-guest-form-activity.html
+$dokka.location:com.example.homepage.REGISTERLOGIN/Login///PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/-login/index.html
+$dokka.location:com.example.homepage.REGISTERLOGIN/Login/Login/#/PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/-login/-login.html
+$dokka.location:com.example.homepage.REGISTERLOGIN/Register///PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/-register/index.html
+$dokka.location:com.example.homepage.REGISTERLOGIN/Register/Register/#/PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/-register/-register.html
+$dokka.location:com.example.homepage.REGISTERLOGIN/Register2///PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/-register2/index.html
+$dokka.location:com.example.homepage.REGISTERLOGIN/Register2/Register2/#/PointingToDeclaration/app/com.example.homepage.REGISTERLOGIN/-register2/-register2.html
+$dokka.location:com.example.homepage.cart////PointingToDeclaration/app/com.example.homepage.cart/index.html
+$dokka.location:com.example.homepage.cart/CartFragment///PointingToDeclaration/app/com.example.homepage.cart/-cart-fragment/index.html
+$dokka.location:com.example.homepage.cart/CartFragment/CartFragment/#/PointingToDeclaration/app/com.example.homepage.cart/-cart-fragment/-cart-fragment.html
+$dokka.location:com.example.homepage.cart/CartFragment/onCreateView/#android.view.LayoutInflater#android.view.ViewGroup#android.os.Bundle/PointingToDeclaration/app/com.example.homepage.cart/-cart-fragment/on-create-view.html
+$dokka.location:com.example.homepage.dashboard////PointingToDeclaration/app/com.example.homepage.dashboard/index.html
+$dokka.location:com.example.homepage.dashboard/DashboardFragment///PointingToDeclaration/app/com.example.homepage.dashboard/-dashboard-fragment/index.html
+$dokka.location:com.example.homepage.dashboard/DashboardFragment/DashboardFragment/#/PointingToDeclaration/app/com.example.homepage.dashboard/-dashboard-fragment/-dashboard-fragment.html
+$dokka.location:com.example.homepage.dashboard/DashboardFragment/onCreate/#android.os.Bundle/PointingToDeclaration/app/com.example.homepage.dashboard/-dashboard-fragment/on-create.html
+$dokka.location:com.example.homepage.dashboard/DashboardFragment/onCreateOptionsMenu/#android.view.Menu#android.view.MenuInflater/PointingToDeclaration/app/com.example.homepage.dashboard/-dashboard-fragment/on-create-options-menu.html
+$dokka.location:com.example.homepage.dashboard/DashboardFragment/onCreateView/#android.view.LayoutInflater#android.view.ViewGroup#android.os.Bundle/PointingToDeclaration/app/com.example.homepage.dashboard/-dashboard-fragment/on-create-view.html
+$dokka.location:com.example.homepage.dashboard/DashboardFragment/onOptionsItemSelected/#android.view.MenuItem/PointingToDeclaration/app/com.example.homepage.dashboard/-dashboard-fragment/on-options-item-selected.html
+$dokka.location:com.example.homepage.home////PointingToDeclaration/app/com.example.homepage.home/index.html
+$dokka.location:com.example.homepage.home/HomeFragment///PointingToDeclaration/app/com.example.homepage.home/-home-fragment/index.html
+$dokka.location:com.example.homepage.home/HomeFragment/HomeFragment/#/PointingToDeclaration/app/com.example.homepage.home/-home-fragment/-home-fragment.html
+$dokka.location:com.example.homepage.home/HomeFragment/onCreateView/#android.view.LayoutInflater#android.view.ViewGroup#android.os.Bundle/PointingToDeclaration/app/com.example.homepage.home/-home-fragment/on-create-view.html
+$dokka.location:com.example.homepage.notifications////PointingToDeclaration/app/com.example.homepage.notifications/index.html
+$dokka.location:com.example.homepage.notifications/NotificationsFragment///PointingToDeclaration/app/com.example.homepage.notifications/-notifications-fragment/index.html
+$dokka.location:com.example.homepage.notifications/NotificationsFragment/NotificationsFragment/#/PointingToDeclaration/app/com.example.homepage.notifications/-notifications-fragment/-notifications-fragment.html
+$dokka.location:com.example.homepage.notifications/NotificationsFragment/onCreateView/#android.view.LayoutInflater#android.view.ViewGroup#android.os.Bundle/PointingToDeclaration/app/com.example.homepage.notifications/-notifications-fragment/on-create-view.html
+$dokka.location:com.example.homepage.ui.dashboard////PointingToDeclaration/app/com.example.homepage.ui.dashboard/index.html
+$dokka.location:com.example.homepage.ui.dashboard/DashboardViewModel///PointingToDeclaration/app/com.example.homepage.ui.dashboard/-dashboard-view-model/index.html
+$dokka.location:com.example.homepage.ui.dashboard/DashboardViewModel/DashboardViewModel/#/PointingToDeclaration/app/com.example.homepage.ui.dashboard/-dashboard-view-model/-dashboard-view-model.html
+$dokka.location:com.example.homepage.ui.dashboard/DashboardViewModel/getText/#/PointingToDeclaration/app/com.example.homepage.ui.dashboard/-dashboard-view-model/get-text.html
+$dokka.location:com.example.homepage.ui.home////PointingToDeclaration/app/com.example.homepage.ui.home/index.html
+$dokka.location:com.example.homepage.ui.home/HomeFragment///PointingToDeclaration/app/com.example.homepage.ui.home/-home-fragment/index.html
+$dokka.location:com.example.homepage.ui.home/HomeFragment/HomeFragment/#/PointingToDeclaration/app/com.example.homepage.ui.home/-home-fragment/-home-fragment.html
+$dokka.location:com.example.homepage.ui.home/HomeFragment/onCreateView/#android.view.LayoutInflater#android.view.ViewGroup#android.os.Bundle/PointingToDeclaration/app/com.example.homepage.ui.home/-home-fragment/on-create-view.html
+$dokka.location:com.example.homepage.ui.home/HomeFragment/onDestroyView/#/PointingToDeclaration/app/com.example.homepage.ui.home/-home-fragment/on-destroy-view.html
+$dokka.location:com.example.homepage.ui.home/HomeViewModel///PointingToDeclaration/app/com.example.homepage.ui.home/-home-view-model/index.html
+$dokka.location:com.example.homepage.ui.home/HomeViewModel/HomeViewModel/#/PointingToDeclaration/app/com.example.homepage.ui.home/-home-view-model/-home-view-model.html
+$dokka.location:com.example.homepage.ui.home/HomeViewModel/getText/#/PointingToDeclaration/app/com.example.homepage.ui.home/-home-view-model/get-text.html
+$dokka.location:com.example.homepage.ui.notifications////PointingToDeclaration/app/com.example.homepage.ui.notifications/index.html
+$dokka.location:com.example.homepage.ui.notifications/NotificationsViewModel///PointingToDeclaration/app/com.example.homepage.ui.notifications/-notifications-view-model/index.html
+$dokka.location:com.example.homepage.ui.notifications/NotificationsViewModel/NotificationsViewModel/#/PointingToDeclaration/app/com.example.homepage.ui.notifications/-notifications-view-model/-notifications-view-model.html
+$dokka.location:com.example.homepage.ui.notifications/NotificationsViewModel/getText/#/PointingToDeclaration/app/com.example.homepage.ui.notifications/-notifications-view-model/get-text.html
+$dokka.location:com.example.homepage.utils////PointingToDeclaration/app/com.example.homepage.utils/index.html
+$dokka.location:com.example.homepage.utils/BookingCart.Reservation///PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-reservation/index.html
+$dokka.location:com.example.homepage.utils/BookingCart.Reservation/Reservation/#java.util.Date#java.util.Date#java.lang.String#java.lang.String#int/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-reservation/-reservation.html
+$dokka.location:com.example.homepage.utils/BookingCart.Reservation/checkInDate/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-reservation/check-in-date.html
+$dokka.location:com.example.homepage.utils/BookingCart.Reservation/checkOutDate/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-reservation/check-out-date.html
+$dokka.location:com.example.homepage.utils/BookingCart.Reservation/guestCount/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-reservation/guest-count.html
+$dokka.location:com.example.homepage.utils/BookingCart.Reservation/price/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-reservation/price.html
+$dokka.location:com.example.homepage.utils/BookingCart.Reservation/roomType/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-reservation/room-type.html
+$dokka.location:com.example.homepage.utils/BookingCart.Reservation/smokingPreference/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-reservation/smoking-preference.html
+$dokka.location:com.example.homepage.utils/BookingCart///PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/index.html
+$dokka.location:com.example.homepage.utils/BookingCart/BookingCart/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/-booking-cart.html
+$dokka.location:com.example.homepage.utils/BookingCart/addItem/#com.example.homepage.utils.BookingCart.Reservation/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/add-item.html
+$dokka.location:com.example.homepage.utils/BookingCart/clearCart/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/clear-cart.html
+$dokka.location:com.example.homepage.utils/BookingCart/getItems/#/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/get-items.html
+$dokka.location:com.example.homepage.utils/BookingCart/removeItem/#com.example.homepage.utils.BookingCart.Reservation/PointingToDeclaration/app/com.example.homepage.utils/-booking-cart/remove-item.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager.ConfirmedReservation///PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/-confirmed-reservation/index.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager.ConfirmedReservation/ConfirmedReservation/#com.example.homepage.utils.BookingCart.Reservation/PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/-confirmed-reservation/-confirmed-reservation.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager.ConfirmedReservation/reservation/#/PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/-confirmed-reservation/reservation.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager///PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/index.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager/ConfirmedBookingManager/#/PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/-confirmed-booking-manager.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager/clearConfirmedBookings/#/PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/clear-confirmed-bookings.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager/confirmBooking/#com.example.homepage.utils.BookingCart.Reservation/PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/confirm-booking.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager/confirmedBookings/#/PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/confirmed-bookings.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager/removeConfirmedReservation/#com.example.homepage.utils.BookingCart.Reservation/PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/remove-confirmed-reservation.html
+$dokka.location:com.example.homepage.utils/ConfirmedBookingManager/removeReservation/#com.example.homepage.utils.BookingCart.Reservation/PointingToDeclaration/app/com.example.homepage.utils/-confirmed-booking-manager/remove-reservation.html
+$dokka.location:com.example.homepage.utils/ReservationManager.Reservation///PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/-reservation/index.html
+$dokka.location:com.example.homepage.utils/ReservationManager.Reservation/Reservation/#java.lang.String#java.lang.String#java.lang.String#int/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/-reservation/-reservation.html
+$dokka.location:com.example.homepage.utils/ReservationManager.Reservation/date/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/-reservation/date.html
+$dokka.location:com.example.homepage.utils/ReservationManager.Reservation/guestCount/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/-reservation/guest-count.html
+$dokka.location:com.example.homepage.utils/ReservationManager.Reservation/roomType/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/-reservation/room-type.html
+$dokka.location:com.example.homepage.utils/ReservationManager.Reservation/smokingPreference/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/-reservation/smoking-preference.html
+$dokka.location:com.example.homepage.utils/ReservationManager///PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/index.html
+$dokka.location:com.example.homepage.utils/ReservationManager/ReservationManager/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/-reservation-manager.html
+$dokka.location:com.example.homepage.utils/ReservationManager/addToCart/#com.example.homepage.utils.ReservationManager.Reservation/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/add-to-cart.html
+$dokka.location:com.example.homepage.utils/ReservationManager/cart/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/cart.html
+$dokka.location:com.example.homepage.utils/ReservationManager/confirmCartItems/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/confirm-cart-items.html
+$dokka.location:com.example.homepage.utils/ReservationManager/currentReservations/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/current-reservations.html
+$dokka.location:com.example.homepage.utils/ReservationManager/pastReservations/#/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/past-reservations.html
+$dokka.location:com.example.homepage.utils/ReservationManager/removeFromCart/#com.example.homepage.utils.ReservationManager.Reservation/PointingToDeclaration/app/com.example.homepage.utils/-reservation-manager/remove-from-cart.html
+$dokka.location:com.example.homepage////PointingToDeclaration/app/com.example.homepage/index.html
+$dokka.location:com.example.homepage/AccountInfo///PointingToDeclaration/app/com.example.homepage/-account-info/index.html
+$dokka.location:com.example.homepage/AccountInfo/AccountInfo/#/PointingToDeclaration/app/com.example.homepage/-account-info/-account-info.html
+$dokka.location:com.example.homepage/MainActivity///PointingToDeclaration/app/com.example.homepage/-main-activity/index.html
+$dokka.location:com.example.homepage/MainActivity/MainActivity/#/PointingToDeclaration/app/com.example.homepage/-main-activity/-main-activity.html
+$dokka.location:com.example.homepage/User///PointingToDeclaration/app/com.example.homepage/-user/index.html
+$dokka.location:com.example.homepage/User/User/#java.lang.String#java.lang.String#java.lang.String#java.lang.String/PointingToDeclaration/app/com.example.homepage/-user/-user.html
+$dokka.location:com.example.homepage/User/checkIfLoggedIn/#com.google.firebase.auth.FirebaseUser#android.content.Context/PointingToDeclaration/app/com.example.homepage/-user/check-if-logged-in.html
+$dokka.location:com.example.homepage/User/getName/#/PointingToDeclaration/app/com.example.homepage/-user/get-name.html
+$dokka.location:com.example.homepage/User/getUserInfo/#java.lang.String/PointingToDeclaration/app/com.example.homepage/-user/get-user-info.html
+$dokka.location:com.example.homepage/User/registerUser/#/PointingToDeclaration/app/com.example.homepage/-user/register-user.html
+com.example.homepage
+com.example.homepage.Payment
+com.example.homepage.REGISTERLOGIN
+com.example.homepage.cart
+com.example.homepage.dashboard
+com.example.homepage.home
+com.example.homepage.notifications
+com.example.homepage.ui.dashboard
+com.example.homepage.ui.home
+com.example.homepage.ui.notifications
+com.example.homepage.utils
+
