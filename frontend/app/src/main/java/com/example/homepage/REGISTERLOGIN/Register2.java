@@ -16,6 +16,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.homepage.MainActivity;
 import com.example.homepage.R;
 import com.example.homepage.USER.User;
 import com.example.homepage.USER.UserRegister;
@@ -74,6 +75,10 @@ public class Register2 extends AppCompatActivity {
                                     Log.d(TAG, "createUserWithEmail:success");
                                     Toast.makeText(Register2.this, "Successfully Created ", Toast.LENGTH_SHORT).show();
                                     UserRegister.registerUser(firstNameText, lastNameText, dob, email, 0);
+                                    User.setUserData(firstNameText, lastNameText, dob, email,0 );
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     progressBar.setVisibility(View.GONE);

@@ -1,5 +1,11 @@
 package com.example.homepage.Payment;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import com.example.homepage.MainActivity;
+import com.example.homepage.USER.User;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -7,74 +13,167 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.homepage.R;
+import com.example.homepage.USER.User;
+import com.example.homepage.utils.ConfirmedBookingManager;
+import com.example.homepage.utils.ReservationManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.stripe.android.paymentsheet.*;
 import com.stripe.android.PaymentConfiguration;
 
-import com.github.kittinunf.fuel.Fuel;
-import com.github.kittinunf.fuel.core.FuelError;
-import com.github.kittinunf.fuel.core.Handler;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CheckoutActivity extends AppCompatActivity {
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-    // code given by Stripe
+public class CheckoutActivity extends AppCompatActivity {
 
     PaymentSheet paymentSheet;
     String paymentIntentClientSecret;
     PaymentSheet.CustomerConfiguration customerConfig;
     private static final String TAG = "CheckoutActivity";
 
+    FirebaseUser mUser;
+    FirebaseAuth auth;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        paymentSheet = new PaymentSheet(this, this::onPaymentSheetResult); //callback to method presentPaymentSheet
-        Fuel.INSTANCE.post("http://10.0.2.2:5000/payment-sheet", null).responseString(new Handler<String>() { //use if on emulator "http://10.0.2.2:5000/payment-sheet" use http://192.168.1.162:5000" if android
-            @Override
-            public void success(String s) {
-                try {
-                    final JSONObject result = new JSONObject(s);
-                    customerConfig = new PaymentSheet.CustomerConfiguration(
-                            result.getString("customer"),
-                            result.getString("ephemeralKey")
-                    );
-                    paymentIntentClientSecret = result.getString("paymentIntent");
-                    PaymentConfiguration.init(getApplicationContext(), result.getString("publishableKey"));
-                    presentPaymentSheet();
+        setContentView(R.layout.activity_checkout);
 
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing payment intent data", e);
-                }
-            }
-
+        paymentSheet = new PaymentSheet(this, new PaymentSheetResultCallback() {
             @Override
-            public void failure(@NonNull FuelError fuelError) {
-                Log.d(TAG, "error");
+            public void onPaymentSheetResult(@NonNull PaymentSheetResult paymentSheetResult) {
+                handlePaymentSheetResult(paymentSheetResult);
             }
         });
+
+        Intent i = getIntent();
+        int amount = i.getIntExtra("amount", 0);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection = null;
+                try {
+                    URL url = new URL("http://10.0.2.2:4242/payment-sheet");
+                    Log.d("URL", "Accessing: " + url);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setConnectTimeout(5000);
+                    urlConnection.setReadTimeout(5000);
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setRequestProperty("Content-Type", "application/json; utf-8");
+
+                    urlConnection.setRequestProperty("Accept", "application/json");
+
+                    Log.d("PaymentRequest", "Amount to be sent: " + amount);
+
+                    auth = FirebaseAuth.getInstance();
+                    mUser = auth.getCurrentUser();
+
+                    JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("amount", amount);
+
+                    Intent i = getIntent();
+
+                    if(mUser != null) {
+                        jsonParam.put("first_name", User.getInstance().getFirstName());
+                        jsonParam.put("last_name", User.getInstance().getLastName());
+                        jsonParam.put("email", User.getInstance().getEmail());
+                        JSONArray reservationArray = new JSONArray();
+                        for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
+                            JSONObject resJson = new JSONObject();
+                            resJson.put("size", res.roomType);;
+                            resJson.put("type", res.smokingPreference);
+                            resJson.put("check_in", res.checkIN);
+                            resJson.put("check_out", res.checkOUT);
+                            reservationArray.put(resJson);
+                        }
+                        jsonParam.put("reservations", reservationArray);
+                    }
+                    else {
+                        jsonParam.put("first_name", i.getStringExtra("first_name"));
+                        jsonParam.put("last_name", i.getStringExtra("last_name"));
+                        jsonParam.put("email", i.getStringExtra("email"));
+                    }
+
+                    OutputStream os = urlConnection.getOutputStream();
+                    OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+                    writer.write(jsonParam.toString());
+                    writer.flush();
+                    writer.close();
+                    os.close();
+
+                    int responseCode = urlConnection.getResponseCode();
+
+                    if (responseCode == 200) {
+                        InputStream is = urlConnection.getInputStream();
+                        byte[] bytes = is.readAllBytes();
+                        String jsonResponse = new String(bytes, StandardCharsets.UTF_8);
+
+                        Log.d("PaymentResponse", "Response: " + jsonResponse);
+
+                        final JSONObject result = new JSONObject(jsonResponse);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    customerConfig = new PaymentSheet.CustomerConfiguration(
+                                            result.getString("customer"),
+                                            result.getString("ephemeralKey")
+                                    );
+                                    paymentIntentClientSecret = result.getString("paymentIntent");
+                                    PaymentConfiguration.init(getApplicationContext(), result.getString("publishableKey"));
+                                    presentPaymentSheet();
+                                } catch (JSONException e) {
+                                    Log.e(TAG, "Error parsing the response", e);
+                                }
+                            }
+                        });
+                    } else {
+                        Log.e(TAG, "Server returned non-OK code: " + responseCode);
+                    }
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to post data: " + e.getMessage(), e);
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
+            }
+        }).start();
     }
 
     private void presentPaymentSheet() {
-        final PaymentSheet.Configuration configuration = new PaymentSheet.Configuration.Builder("EZSTAY CORP")
+        PaymentSheet.Configuration configuration = new PaymentSheet.Configuration.Builder("EZSTAY CORP")
                 .customer(customerConfig)
                 .allowsDelayedPaymentMethods(true)
                 .build();
-        paymentSheet.presentWithPaymentIntent(
-                paymentIntentClientSecret,
-                configuration
-        );
+        paymentSheet.presentWithPaymentIntent(paymentIntentClientSecret, configuration);
     }
-    private void onPaymentSheetResult(
-            final PaymentSheetResult paymentSheetResult
-    ) {
+
+    private void handlePaymentSheetResult(@NonNull PaymentSheetResult paymentSheetResult) {
         if (paymentSheetResult instanceof PaymentSheetResult.Canceled) {
-            Log.d(TAG, "Canceled");
+            Log.d(TAG, "Payment canceled");
         } else if (paymentSheetResult instanceof PaymentSheetResult.Failed) {
-            Log.e(TAG, "Got error: ", ((PaymentSheetResult.Failed) paymentSheetResult).getError());
+            Log.e(TAG, "Payment failed", ((PaymentSheetResult.Failed) paymentSheetResult).getError());
         } else if (paymentSheetResult instanceof PaymentSheetResult.Completed) {
-            // Display for example, an order confirmation screen
-            Log.d(TAG, "Completed");
+            Log.d(TAG, "Payment completed successfully!");
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(i);
         }
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ public class AccountInfo extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser mUser;
     private Button logoutBtn, loginBtn;
+    ImageButton backBtn;
     private LinearLayout reservations, history, editProfile;
     private TextView notLoggedInMessage, fullName;
 
@@ -61,28 +63,14 @@ public class AccountInfo extends AppCompatActivity {
         mUser = auth.getCurrentUser();
 
 
+
+
         if (mUser != null) {
             accountInfoGroup.setVisibility(View.VISIBLE);
             guestInfoGroup.setVisibility(View.GONE);
-
-            user = new User();
-
-            userFetcher.getUserInfo(mUser.getEmail(), new UserInfoFetcher.UserInfoCallback() {
-                @Override
-                public void onUserInfoReceived(User newUser) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            user = newUser;
-                            Log.d("User Info", "Full Name: " + user.getUserID());
-                            fullName.setText(user.getName());
-                        }
-                    });
-                }
-            });
-
+            user = User.getInstance();
+            fullName.setText(user.getName());
         } else {
-            // User is not signed in
             accountInfoGroup.setVisibility(View.GONE);
             guestInfoGroup.setVisibility(View.VISIBLE);
         }
@@ -115,12 +103,6 @@ public class AccountInfo extends AppCompatActivity {
                 fullName.setVisibility(View.GONE);
 
                 ReservationsFragment reservationsFragment = new ReservationsFragment();
-
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("user_data", user);
-
-                reservationsFragment.setArguments(bundle);
-
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                 // Replace the current content (which is the AccountInfoActivity layout) with ReservationsFragment
@@ -136,11 +118,6 @@ public class AccountInfo extends AppCompatActivity {
                 fullName.setVisibility(View.GONE);
 
                 HistoryFragment historyFragment = new HistoryFragment();
-
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("user_data", user);
-
-                historyFragment.setArguments(bundle);
 
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -158,12 +135,6 @@ public class AccountInfo extends AppCompatActivity {
                 fullName.setVisibility(View.GONE);
 
                 ReservationsFragment reservationsFragment = new ReservationsFragment();
-
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("user_data", user);
-
-                reservationsFragment.setArguments(bundle);
-
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                 // Replace the current content (which is the AccountInfoActivity layout) with ReservationsFragment
@@ -180,6 +151,7 @@ public class AccountInfo extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 accountInfoGroup.setVisibility(View.GONE);
+                fullName.setVisibility(View.GONE);
                 notLoggedInMessage.setVisibility(View.VISIBLE);
                 loginBtn.setVisibility(View.VISIBLE);
             }
@@ -194,9 +166,14 @@ public class AccountInfo extends AppCompatActivity {
             }
         });
 
-
+        backBtn = findViewById(R.id.back_button);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     }
-
 }
 

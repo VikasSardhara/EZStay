@@ -1,5 +1,6 @@
 package com.example.homepage.Profile;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,18 +13,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.homepage.BOOKING.BookingsFetcher;
 import com.example.homepage.R;
-import com.example.homepage.BOOKING.Booking;
 import com.example.homepage.ROOM.RoomSearch;
 import com.example.homepage.ROOM.Room;
 import com.example.homepage.USER.User;
+import com.example.homepage.utils.ReservationManager;
 
 import java.util.ArrayList;
 
 public class ReservationsFragment extends Fragment {
-
-    public ReservationsFragment() {
-    }
 
     Button backBtn;
     User user;
@@ -44,54 +43,61 @@ public class ReservationsFragment extends Fragment {
             }
         });
 
-        Bundle bundle = getArguments();
-        user = bundle.getParcelable("user_data");
+        user = User.getInstance();
+        int userId = user.getUserID(); // Replace this with actual userId logic
 
-        //remind to use REAL USER ID
-        Booking.getBookings(1001, false, new Booking.BookingsListener() {
+        BookingsFetcher.getBookings(1010, false, new BookingsFetcher.BookingsListener() {
             @Override
-            public void onBookingsReceived(ArrayList<Booking> futureBookingsList) {
-                if (futureBookingsList.isEmpty()) {
-                    TextView noData = new TextView(getContext());
-                    noData.setText("No previous reservations.");
-                    previousReservationsContainer.addView(noData);
-                }
+            public void onBookingsReceived(final ArrayList<ReservationManager.Reservation> bookings) {
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("ReservationsFragment", "Fetched bookings: " + bookings.size() + " bookings received.");
 
-                if (futureBookingsList.isEmpty()) {
-                    TextView noData = new TextView(getContext());
-                    noData.setText("No previous reservations.");
-                    previousReservationsContainer.addView(noData);
-                } else {
-                    for (Booking futureBooking : futureBookingsList) {
-                        Log.d("tetstt", "hi" + futureBookingsList);
-                        Log.d("tetstt", "hi" + futureBooking.getRoomId());
+                        if (ReservationManager.getCurrentReservations().isEmpty()) {
+                            Log.d("ReservationsFragment", "No current reservations to display.");
+                            TextView noData = new TextView(getContext());
+                            noData.setText("No future reservations.");
+                            previousReservationsContainer.addView(noData);
+                        } else {
+                            Log.d("ReservationsFragment", "Displaying " + ReservationManager.getCurrentReservations().size() + " current reservations.");
 
-                        // Get room details for each booking
-                        RoomSearch.RoomSearch(getContext(), "rooms copy.csv", futureBooking.getRoomId(), new RoomSearch.RoomSearchCallback() {
-                            @Override
-                            public void onRoomFound(Room room) {
-                                // Ensure UI updates happen on the main thread
-                                requireActivity().runOnUiThread(new Runnable() {
+                            for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
+                                Log.d("ReservationsFragment", "Fetching room info for room ID: " + res.roomID);
+
+                                RoomSearch.getRoomById(res.roomID, new RoomSearch.RoomSearchCallback() {
                                     @Override
-                                    public void run() {
-                                        TextView bookingText = new TextView(getContext());
-                                        Log.d("ROOMFOUND", "onRoomFound: " + room.getType());
-                                        String displayText = "Booking ID: " + futureBooking.getBookingId() + "\n" +
-                                                "Room ID: " + futureBooking.getRoomId() + "\n" +
-                                                "Room Type: " + room.getType() + "\n" +
-                                                "Room Size: " + room.getSize() + "\n" +
-                                                "Check-in: " + futureBooking.getCheckInDate() + "\n" +
-                                                "Check-out: " + futureBooking.getCheckOutDate() + "\n" +
-                                                "Guests: " + futureBooking.getNumGuests();
-                                        bookingText.setText(displayText);
-                                        bookingText.setPadding(0, 0, 0, 24);
-                                        previousReservationsContainer.addView(bookingText);
+                                    public void onRoomFound(Room room) {
+                                        if (room == null) {
+                                            Log.e("ROOMFOUND", "Room not found for room ID: " + res.roomID);
+                                            return;
+                                        }
+
+                                        Log.d("ROOMFOUND", "Room found: " + room.getType() + ", Size: " + room.getSize());
+
+                                        requireActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                TextView bookingText = new TextView(getContext());
+                                                String displayText = "Booking ID: " + res.bookingID + "\n" +
+                                                        "Room ID: " + res.roomID + "\n" +
+                                                        "Room Type: " + room.getType() + "\n" +
+                                                        "Room Size: " + room.getSize() + "\n" +
+                                                        "Check-in: " + res.checkIN + "\n" +
+                                                        "Check-out: " + res.checkOUT + "\n" +
+                                                        "Guests: " + res.guestCount;
+
+                                                bookingText.setText(displayText);
+                                                bookingText.setPadding(0, 0, 0, 24);
+                                                previousReservationsContainer.addView(bookingText);
+                                            }
+                                        });
                                     }
                                 });
                             }
-                        });
+                        }
                     }
-                }
+                });
             }
         });
 

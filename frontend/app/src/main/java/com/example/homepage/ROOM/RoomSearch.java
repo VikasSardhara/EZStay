@@ -1,49 +1,83 @@
 package com.example.homepage.ROOM;
 
-import android.content.Context;
-import android.content.res.AssetManager;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class RoomSearch {
-    // Updated method to work with assets folder
-    public static void RoomSearch(Context context, String fileName, int searchRoomId, RoomSearchCallback callback) {
-        AssetManager assetManager = context.getAssets();
 
-        Log.d("RoomSearch", "Opening file: " + fileName);
-        Log.d("roomid","hi" + searchRoomId);
+    public static void getRoomById(final int roomId, final RoomSearchCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection = null;
+                try {
+                    String roomIdEncoded = URLEncoder.encode(String.valueOf(roomId), StandardCharsets.UTF_8);
+                    URL url = new URL("http://10.0.2.2:5000/rooms?room_id=" + roomIdEncoded);
+                    Log.d("RoomSearch", "Accessing: " + url.toString());
+
+                    // Open the connection
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.setConnectTimeout(5000);
+                    urlConnection.setReadTimeout(5000);
+
+                    // Get the response code
+                    int responseCode = urlConnection.getResponseCode();
+
+                    if (responseCode == 200) {
+                        // Read the response
+                        InputStream is = urlConnection.getInputStream();
+                        byte[] bytes = is.readAllBytes();
+                        String jsonResponse = new String(bytes, StandardCharsets.UTF_8);
+
+                        Log.d("RoomSearch", "Response: " + jsonResponse);
+
+                        // Parse the response as a JSONObject
+                        JSONObject jsonObject = new JSONObject(jsonResponse);
+
+                        JSONArray roomsArray = jsonObject.getJSONArray("rooms");
+
+                        int target_id;
 
 
-        try (InputStream is = assetManager.open(fileName);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                        for (int i = 0; i < roomsArray.length(); i++) {
+                            JSONObject room = roomsArray.getJSONObject(i);
 
-            String line;
-            // Skip the header (first line)
-            br.readLine();
+                            target_id= room.getInt("room_id");
 
-            // Read each line of the CSV file
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");  //example line: 101(room id),King,Non-Smoking
-                Log.d("RoomSearch", "reading line: " + line);
+                            if (target_id == roomId) {
+                                String size = room.getString("size");
+                                String type = room.getString("type");
+                                Room roomObj = new Room(target_id, size, type);
+                                callback.onRoomFound(roomObj);
+                                break;
+                            }
+                        }
 
-                int roomID = Integer.parseInt(data[0]); //ex: gets 101
-                Log.d("RoomSearch", "reading line: " + data[0]);
 
+                    } else {
+                        Log.e("RoomSearch", "Unable to retrieve room info. Response code: " + responseCode);
+                        callback.onRoomFound(null);
+                    }
 
-                if (roomID == searchRoomId) {
-                    Room room = new Room(roomID, data[1], data[2]);
-                    callback.onRoomFound(room);
-                    break;
+                } catch (Exception e) {
+                    Log.e("RoomSearch", "Failed to get data: " + e.getMessage());
+                    callback.onRoomFound(null);
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
                 }
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 
     public interface RoomSearchCallback {

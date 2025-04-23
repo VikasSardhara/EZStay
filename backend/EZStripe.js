@@ -2,7 +2,7 @@ const express = require('express');
 const stripe = require('stripe')('sk_test_51R65YnFQK7HmrpDOZ8MhB8waSHJG8dnhtt4oJGfiaFbhRW79rQ3dyz42r6GQkvd54jxQyl0en2pq13btXYQxuX0B008fDthRBe');
 
 const app = express();
-const port = 5000;
+const port = 4242;
 
 app.use(express.json());
 
@@ -11,21 +11,29 @@ console.log('Setting up the payment sheet route...');
 app.post('/payment-sheet', async (req, res) => {
   try {
     console.log('Received payment-sheet request...');
-    
+    console.log('Request Body:', req.body);
+
+    const amount = req.body.amount;
+
+    if (!amount || typeof amount !== 'number') {
+      return res.status(400).json({ error: 'Invalid or missing amount' });
+    }
+
     const customer = await stripe.customers.create();
     const ephemeralKey = await stripe.ephemeralKeys.create(
-      {customer: customer.id},
-      {apiVersion: '2025-02-24.acacia'}
+      { customer: customer.id },
+      { apiVersion: '2025-02-24.acacia' }
     );
+
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1099,
-      currency: 'eur',
+      amount: amount, // use the dynamic amount
+      currency: 'usd', // or 'eur' if you're in Europe
       customer: customer.id,
       automatic_payment_methods: { enabled: true },
     });
 
-    console.log('Payment sheet response ready, sending...');
-    
+    console.log('✅ Payment sheet response ready, sending...');
+
     res.json({
       paymentIntent: paymentIntent.client_secret,
       ephemeralKey: ephemeralKey.secret,
@@ -40,5 +48,5 @@ app.post('/payment-sheet', async (req, res) => {
 
 console.log('Starting server...');
 app.listen(port, () => {
-  console.log(`Server running at ${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });

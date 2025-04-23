@@ -3,6 +3,7 @@ package com.example.homepage.utils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class BookingCart {
 
@@ -12,6 +13,7 @@ public class BookingCart {
         private final String roomType;
         private final String smokingPreference;
         private final int guestCount;
+        private final double price;
 
         public Reservation(Date checkInDate, Date checkOutDate, String roomType, String smokingPreference, int guestCount) {
             this.checkInDate = checkInDate;
@@ -19,6 +21,7 @@ public class BookingCart {
             this.roomType = roomType;
             this.smokingPreference = smokingPreference;
             this.guestCount = guestCount;
+            this.price = calculatePrice();
         }
 
         public Date getCheckInDate() {
@@ -40,6 +43,21 @@ public class BookingCart {
         public int getGuestCount() {
             return guestCount;
         }
+
+        public double getPrice() {
+            return price;
+        }
+
+        private double calculatePrice() {
+            int nights = getNumberOfNights();
+            int baseRate = roomType.equalsIgnoreCase("King") ? 100 : 140;
+            return baseRate * nights;
+        }
+
+        private int getNumberOfNights() {
+            long diffInMillis = checkOutDate.getTime() - checkInDate.getTime();
+            return (int) TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
+        }
     }
 
     private static final List<Reservation> cartItems = new ArrayList<>();
@@ -49,7 +67,7 @@ public class BookingCart {
     }
 
     public static void removeItem(Reservation reservation) {
-        cartItems.remove(reservation); // uses object equality
+        cartItems.remove(reservation);
     }
 
     public static List<Reservation> getItems() {

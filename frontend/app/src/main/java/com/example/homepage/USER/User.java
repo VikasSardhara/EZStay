@@ -1,9 +1,8 @@
 package com.example.homepage.USER;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+public class User {
 
-public class User implements Parcelable {
+    private static User instance;
 
     private String firstName;
     private String lastName;
@@ -11,55 +10,25 @@ public class User implements Parcelable {
     private String email;
     private int userID;
 
-    public User() {
-        this.firstName = "";
-        this.lastName = "";
-        this.dob = "";
-        this.email = "";
-        this.userID = 0;
-    }
-
-    public User(String firstName, String lastName, String dob, String email, int userID) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dob = dob;
-        this.email = email;
-        this.userID = userID;
-    }
-
-    protected User(Parcel in) {
-        firstName = in.readString();
-        lastName = in.readString();
-        dob = in.readString();
-        email = in.readString();
-        userID = in.readInt();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(firstName);
-        dest.writeString(lastName);
-        dest.writeString(dob);
-        dest.writeString(email);
-        dest.writeInt(userID);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        @Override
-        public User createFromParcel(Parcel in) {
-            return new User(in);
+    public static User getInstance() {
+        if (instance == null) {
+            instance = new User();
         }
+        return instance;
+    }
 
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
+    public static void setUserData(String firstName, String lastName, String dob, String email, int userID) {
+        User user = getInstance();
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.dob = dob;
+        user.email = email;
+        user.userID = userID;
+    }
+
+    public static void clear() {
+        instance = null;
+    }
 
     public String getName() {
         return firstName + " " + lastName;
@@ -84,5 +53,4 @@ public class User implements Parcelable {
     public int getUserID() {
         return userID;
     }
-
 }

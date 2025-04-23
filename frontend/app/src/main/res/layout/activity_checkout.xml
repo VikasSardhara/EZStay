@@ -5,20 +5,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Checkout">
+    tools:context=".Payment.CheckoutActivity">
 
-    <Button
-        android:id="@+id/pay_button"
+    <TextView
+        android:id="@+id/paymentAmountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
-        android:text="Pay Now"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
+        android:layout_centerHorizontal="true"
+        android:text="Amount: $0.00"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.827" />
+        app:layout_constraintVertical_bias="0.256" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.example.homepage.home;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,6 +31,8 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import java.util.concurrent.TimeUnit;
 
 public class HomeFragment extends Fragment {
 
@@ -82,7 +85,7 @@ public class HomeFragment extends Fragment {
         });
 
         btnBookNow.setOnClickListener(v -> {
-            // Input validations
+
             if (checkInCalendar == null || checkOutCalendar == null) {
                 Toast.makeText(getContext(), "Please select check-in and check-out dates.", Toast.LENGTH_SHORT).show();
                 return;
@@ -110,7 +113,6 @@ public class HomeFragment extends Fragment {
                 return;
             }
 
-            // ✅ Construct backend request
             String roomType = rbKing.isChecked() ? "King" : "Queen";
             String smokingPref = rbSmoking.isChecked() ? "Smoking" : "Non-Smoking";
 
@@ -118,48 +120,40 @@ public class HomeFragment extends Fragment {
 
             RequestQueue queue = Volley.newRequestQueue(requireContext());
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                JSONArray rooms = response.getJSONArray("rooms");
-                                if (rooms.length() > 0) {
-                                    JSONObject firstRoom = rooms.getJSONObject(0);
-                                    int roomId = firstRoom.getInt("room_id");
+                    response -> {
+                        try {
+                            JSONArray rooms = response.getJSONArray("rooms");
+                            if (rooms.length() > 0) {
+                                JSONObject firstRoom = rooms.getJSONObject(0);
+                                int roomId = firstRoom.getInt("room_id");
 
-                                    // Add booking to cart
-                                    BookingCart.Reservation booking = new BookingCart.Reservation(
-                                            checkInCalendar.getTime(),
-                                            checkOutCalendar.getTime(),
-                                            roomType,
-                                            smokingPref,
-                                            guestCount
-                                    );
+                                // ✅ Create reservation — automatically calculates price
+                                BookingCart.Reservation booking = new BookingCart.Reservation(
+                                        checkInCalendar.getTime(),
+                                        checkOutCalendar.getTime(),
+                                        roomType,
+                                        smokingPref,
+                                        guestCount
+                                );
 
-                                    BookingCart.addItem(booking);
-                                    Toast.makeText(getContext(), "Booking added to cart.", Toast.LENGTH_SHORT).show();
+                                BookingCart.addItem(booking);
+                                Toast.makeText(getContext(), "Booking added to cart.", Toast.LENGTH_SHORT).show();
+                                BottomNavigationView navView = requireActivity().findViewById(R.id.bottomNavigationView);
+                                navView.setSelectedItemId(R.id.nav_dashboard);
+                                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_container, new CartFragment());
+                                transaction.addToBackStack(null);
+                                transaction.commit();
 
-                                    // Navigate to Cart
-                                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                                    transaction.replace(R.id.fragment_container, new CartFragment());
-                                    transaction.addToBackStack(null);
-                                    transaction.commit();
-
-                                } else {
-                                    Toast.makeText(getContext(), "No rooms available.", Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Toast.makeText(getContext(), "Error parsing response.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "No rooms available.", Toast.LENGTH_SHORT).show();
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), "Error parsing response.", Toast.LENGTH_SHORT).show();
                         }
                     },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    error -> Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show());
 
             queue.add(request);
         });

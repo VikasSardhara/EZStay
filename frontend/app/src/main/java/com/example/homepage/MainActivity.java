@@ -6,37 +6,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.homepage.Payment.Checkout;
 import com.example.homepage.Profile.AccountInfo;
-import com.example.homepage.REGISTERLOGIN.Register;
 import com.example.homepage.dashboard.DashboardFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import com.example.homepage.home.HomeFragment;
-import com.example.homepage.notifications.NotificationsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-Button test;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_home);
-
-        test = findViewById(R.id.testBtn);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), AccountInfo.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
@@ -58,8 +41,10 @@ Button test;
                     selectedFragment = new HomeFragment();
                 } else if (itemId == R.id.nav_dashboard) {
                     selectedFragment = new DashboardFragment();
-                } else if (itemId == R.id.nav_notifications) {
-                    selectedFragment = new NotificationsFragment();
+                } else if (itemId == R.id.nav_account) {
+                    Intent intent = new Intent(MainActivity.this, AccountInfo.class);
+                    startActivity(intent);
+                    return false;
                 }
 
                 if (selectedFragment != null) {
