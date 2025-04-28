@@ -1,11 +1,10 @@
 package com.example.homepage.REGISTERLOGIN;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -15,12 +14,11 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.homepage.MainActivity;
+import com.example.homepage.Payment.GuestFormActivity;
 import com.example.homepage.R;
+import com.example.homepage.USER.UserInfoFetcher;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -39,14 +37,37 @@ public class Login extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     TextView continueGuest;
-    FirebaseUser user;
-
+    FirebaseUser mUser;
+    FirebaseAuth auth;
+    TextView loginDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+
+        auth = FirebaseAuth.getInstance();
+        mUser = auth.getCurrentUser();
+
+        if(mUser != null){
+            UserInfoFetcher.getUserInfo(mUser.getEmail());
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        loginDisplay= findViewById(R.id.login_display);
+        Intent intent = getIntent();
+        boolean fromCheckout = intent.getBooleanExtra("from_checkout", false);
+        Log.d("Fromcheckout", "val" + fromCheckout);
+
+        if (fromCheckout) {
+            loginDisplay.setText("You're almost There!");
+        } else {
+            loginDisplay.setText("Login");
+            loginDisplay.setTextSize(TypedValue.COMPLEX_UNIT_SP, 35);
+        }
 
         loginButton = findViewById(R.id.login_button);
         editTextEmail = findViewById(R.id.email);
@@ -80,18 +101,6 @@ public class Login extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     Toast.makeText(Login.this, "Successfully signed in!.", Toast.LENGTH_SHORT).show();
                                     FirebaseUser user = mAuth.getCurrentUser();
-                                    user.getIdToken(true)
-                                            .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                                                public void onComplete(@NonNull Task<GetTokenResult> task) {
-                                                    if (task.isSuccessful()) {
-                                                        String idToken = task.getResult().getToken();
-                                                        //send token to backend
-
-                                                    } else {
-                                                        // Handle error -> task.getException();
-                                                    }
-                                                }
-                                            });
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();
@@ -115,9 +124,15 @@ public class Login extends AppCompatActivity {
         continueGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
+                if (fromCheckout) {
+                    Intent i = new Intent(getApplicationContext(), GuestFormActivity.class);
+                    startActivity(i);
+                    finish();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
     }

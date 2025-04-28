@@ -45,16 +45,17 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.activity)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.firebase.auth)
 
-    implementation("com.stripe:stripe-android:21.5.1")
-    implementation("com.stripe:stripe-android:21.6.0")
-    implementation("com.github.kittinunf.fuel:fuel:2.3.1")
-    implementation("com.android.volley:volley:1.2.1")
+    implementation(libs.stripe.android)
+    implementation(libs.stripe.android)
+    implementation(libs.fuel)
+    implementation(libs.volley)
 
     // Include the financial connections SDK to support US bank account as a payment method
-    implementation("com.stripe:financial-connections:21.6.0")
+    implementation(libs.stripe.financial.connections)
 }

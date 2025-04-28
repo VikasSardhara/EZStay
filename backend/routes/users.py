@@ -106,4 +106,22 @@ def get_all_users():
         return jsonify({"users": df.to_dict(orient="records")})
     except FileNotFoundError:
         return jsonify({"error": "users.csv not found"}), 404
-    
+
+@users_bp.route("/users/<string:email>", methods=["GET"])
+def get_user_by_email(email):
+    """API to fetch user information by email"""
+    try:
+        df = pd.read_csv(USERS_FILE)
+
+        # Filter users by email (case insensitive)
+        user_info = df[df["email"].str.lower() == email.lower()]
+
+        if user_info.empty:
+            return jsonify({"message": f"No user found for {email}"}), 404
+
+        return jsonify({"users": user_info.to_dict(orient="records")})
+
+    except FileNotFoundError:
+        return jsonify({"error": "users.csv not found"}), 404
+    except ValueError:
+        return jsonify({"error": "Invalid email format"}), 400

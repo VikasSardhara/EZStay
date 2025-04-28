@@ -15,17 +15,9 @@
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-<<<<<<< HEAD
-        android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavigationView">
-    </FrameLayout>
-
-    <!-- Bottom Navigation Bar -->
-=======
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
->>>>>>> c3f3a90 (WIP: saving my local changes before rebase)
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"

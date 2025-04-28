@@ -12,6 +12,7 @@ Date: April 2025
 
 
 import os
+import csv
 from flask import Blueprint, request, jsonify
 import pandas as pd
 from datetime import datetime
@@ -119,5 +120,93 @@ def get_filtered_rooms():
 
         return jsonify({"rooms": df.to_dict(orient="records")})
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@rooms_bp.route("/roommaker", methods=["POST"])
+def register_room():
+
+    """
+    Registers a new room and stores the data in rooms.csv.
+
+    Request JSON:
+        {
+            "room_id": int,
+            "size": str,
+            "type": str
+        }
+
+    Returns:
+        JSON: Success message with room_id or error message.
+    """
+
+    """API to register a new room"""
+    try:
+        data = request.json
+        room_id = data.get("room_id")
+        size = data.get("size")
+        type = data.get("type")
+
+        # Validate input fields
+        if not all([room_id, size, type]):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Check if the file exists and is not empty
+        if os.stat(ROOMS_FILE).st_size == 0:
+            df = pd.DataFrame(columns=["room_id", "size", "type"])
+        else:
+            df = pd.read_csv(ROOMS_FILE)
+
+        # Check if room_id already exists
+        if not df.empty and room_id in df["room_id"].values:
+            return jsonify({"error": "room_id is already registered"}), 400 
+
+        #Create new room entry
+        new_room = {
+            "room_id": room_id,
+            "size": size,
+            "type": type,
+        }
+
+        # Append room to CSV
+        with open(ROOMS_FILE, "a", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=df.columns)
+            if df.empty:
+                writer.writeheader()  # Write headers if file is empty
+            writer.writerow(new_room)
+
+        return jsonify({"message": "Room registered successfully", "room_id": room_id}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@rooms_bp.route("/rooms/<int:room_id>", methods=["DELETE"])
+def delete_room(room_id):
+
+    """
+    Delete a room
+
+    Args:
+        room_id (int): ID of the room to delete.
+
+    Returns:
+        JSON: Success or error message.
+    """
+
+
+    try:
+        df = pd.read_csv(ROOMS_FILE)
+        if room_id not in df["room_id"].values:
+            return jsonify({"error": f"Room ID {room_id_id} not found"}), 404
+
+        df = df[df["room_id"] != room_id]
+        df.to_csv(ROOMS_FILE, index=False)
+
+        return jsonify({"message": f"Room {room_id} deleted successfully"}), 200
+
+    except FileNotFoundError:
+        return jsonify({"error": "rooms.csv not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500

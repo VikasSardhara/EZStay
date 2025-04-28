@@ -1,6 +1,7 @@
-package com.example.homepage.REGISTERLOGIN;
+package com.example.homepage.Payment;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,7 @@ import com.example.homepage.R;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
 
 public class GuestFormActivity extends AppCompatActivity {
 
@@ -51,9 +53,14 @@ public class GuestFormActivity extends AppCompatActivity {
                 Toast.makeText(this, "You must be at least 18 years old to book.", Toast.LENGTH_LONG).show();
                 return;
             }
+            Intent i = new Intent(getApplicationContext(), CheckoutActivity.class);
+            i.putExtra("first_name", firstName);
+            i.putExtra("last_name", lastName);
+            i.putExtra("email", email);
+            startActivity(i);
+            finish();
 
             Toast.makeText(this, "Guest form submitted. Welcome!", Toast.LENGTH_SHORT).show();
-
             // You can now navigate to the Home screen or store this guest data for further use.
         });
     }
@@ -80,4 +87,6 @@ public class GuestFormActivity extends AppCompatActivity {
         legalAge.add(Calendar.YEAR, 18);
         return !today.before(legalAge); // returns true if today is after or equal to 18th birthday
     }
+
+
 }

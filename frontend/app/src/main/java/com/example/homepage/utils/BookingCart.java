@@ -15,13 +15,16 @@ public class BookingCart {
         private final int guestCount;
         private final double price;
 
-        public Reservation(Date checkInDate, Date checkOutDate, String roomType, String smokingPreference, int guestCount) {
+        private final int roomId;
+
+        public Reservation(Date checkInDate, Date checkOutDate, String roomType, String smokingPreference, int guestCount, int roomId) {
             this.checkInDate = checkInDate;
             this.checkOutDate = checkOutDate;
             this.roomType = roomType;
             this.smokingPreference = smokingPreference;
             this.guestCount = guestCount;
             this.price = calculatePrice();
+            this.roomId = roomId;
         }
 
         public Date getCheckInDate() {
@@ -48,6 +51,8 @@ public class BookingCart {
             return price;
         }
 
+        public int getRoomId(){return roomId;}
+
         private double calculatePrice() {
             int nights = getNumberOfNights();
             int baseRate = roomType.equalsIgnoreCase("King") ? 100 : 140;
@@ -58,6 +63,8 @@ public class BookingCart {
             long diffInMillis = checkOutDate.getTime() - checkInDate.getTime();
             return (int) TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
         }
+
+
     }
 
     private static final List<Reservation> cartItems = new ArrayList<>();

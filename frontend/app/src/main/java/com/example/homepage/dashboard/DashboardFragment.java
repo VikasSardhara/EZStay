@@ -1,6 +1,8 @@
 package com.example.homepage.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,9 +18,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.homepage.Payment.CheckoutActivity;
 import com.example.homepage.R;
+import com.example.homepage.REGISTERLOGIN.Login;
+import com.example.homepage.USER.User;
 import com.example.homepage.cart.CartFragment;
 import com.example.homepage.utils.ConfirmedBookingManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -50,17 +57,24 @@ public class DashboardFragment extends Fragment {
 
         displayCurrentReservations();
 
-        btnPayFromCurrent.setOnClickListener(v -> {
-            double total = 0;
-            for (ConfirmedBookingManager.ConfirmedReservation res : ConfirmedBookingManager.getConfirmedBookings()) {
-                total += res.getReservation().getPrice();
+        btnPayFromCurrent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double total = 0;
+                for (ConfirmedBookingManager.ConfirmedReservation res : ConfirmedBookingManager.getConfirmedBookings()) {
+                    total += res.getReservation().getPrice();
+                }
+                String totalPrice = NumberFormat.getCurrencyInstance(Locale.US).format(total);
+                Intent i = new Intent(getActivity(), CheckoutActivity.class);
+                i.putExtra("amount", total);
+                startActivity(i);
             }
-            String totalPrice = NumberFormat.getCurrencyInstance(Locale.US).format(total);
-            Toast.makeText(getContext(), "Total: " + totalPrice + " (Payment not implemented)", Toast.LENGTH_LONG).show();
         });
+
 
         return view;
     }
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -69,7 +83,6 @@ public class DashboardFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_cart) {
@@ -120,7 +133,17 @@ public class DashboardFragment extends Fragment {
             total += res.getReservation().getPrice();
 
             btnPay.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Paying for this reservation (Not implemented)", Toast.LENGTH_SHORT).show();
+                FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                if (mUser != null) {
+                    Intent i = new Intent(requireContext(), com.example.homepage.Payment.CheckoutActivity.class);
+                   //i.putExtra("amount", (double)(res.getPrice() * 100));
+                    startActivity(i);
+                } else {
+                    Intent intent = new Intent(requireContext(), Login.class);
+                    intent.putExtra("from_checkout", true);
+                    startActivity(intent);
+                }
             });
 
             btnRemove.setOnClickListener(v -> {
