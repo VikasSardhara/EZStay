@@ -1,8 +1,16 @@
+/**
+ * DashboardFragment.java
+ *
+ * Displays the user's confirmed bookings.
+ * Users can view reservation details, remove a confirmed booking, or proceed to payment.
+ *
+ * Author: EZStay Team
+ * Date: April 2025
+ */
 package com.example.homepage.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +29,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.homepage.Payment.CheckoutActivity;
 import com.example.homepage.R;
 import com.example.homepage.REGISTERLOGIN.Login;
-import com.example.homepage.USER.User;
 import com.example.homepage.cart.CartFragment;
 import com.example.homepage.utils.ConfirmedBookingManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,21 +39,32 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Displays confirmed bookings.
+ */
 public class DashboardFragment extends Fragment {
 
     private LinearLayout currentReservationsContainer;
     private Button btnPayFromCurrent;
     private TextView tvTotalPrice;
 
+    /**
+     * Default constructor for DashboardFragment.
+     */
     public DashboardFragment() {}
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Enables the cart menu.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true); // ✅ Enables the cart menu
+        setHasOptionsMenu(true); // Enables cart icon in the menu bar
     }
 
+    /**
+     * Inflates the layout and sets up listeners.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,32 +75,35 @@ public class DashboardFragment extends Fragment {
 
         displayCurrentReservations();
 
-        btnPayFromCurrent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                double total = 0;
-                for (ConfirmedBookingManager.ConfirmedReservation res : ConfirmedBookingManager.getConfirmedBookings()) {
-                    total += res.getReservation().getPrice();
-                }
-                String totalPrice = NumberFormat.getCurrencyInstance(Locale.US).format(total);
+        btnPayFromCurrent.setOnClickListener(v -> {
+            double total = 0;
+            for (ConfirmedBookingManager.ConfirmedReservation res : ConfirmedBookingManager.getConfirmedBookings()) {
+                total += res.getReservation().getPrice();
+            }
+            if (total > 0) {
                 Intent i = new Intent(getActivity(), CheckoutActivity.class);
-                i.putExtra("amount", total);
+                i.putExtra("amount", (int)(total * 100)); // Stripe expects cents
                 startActivity(i);
+            } else {
+                Toast.makeText(getContext(), "No confirmed bookings to pay for.", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         return view;
     }
 
-
-    @SuppressWarnings("deprecation")
+    /**
+     * Inflate the menu for cart navigation.
+     */
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.dashboard_menu, menu); // ✅ Inflate your menu file
+        inflater.inflate(R.menu.dashboard_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    /**
+     * Handle cart button click.
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_cart) {
@@ -95,11 +116,14 @@ public class DashboardFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Displays current confirmed reservations.
+     */
     private void displayCurrentReservations() {
         currentReservationsContainer.removeAllViews();
 
         List<ConfirmedBookingManager.ConfirmedReservation> confirmed = ConfirmedBookingManager.getConfirmedBookings();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
         if (confirmed.isEmpty()) {
@@ -134,10 +158,13 @@ public class DashboardFragment extends Fragment {
 
             btnPay.setOnClickListener(v -> {
                 FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-
                 if (mUser != null) {
-                    Intent i = new Intent(requireContext(), com.example.homepage.Payment.CheckoutActivity.class);
-                   //i.putExtra("amount", (double)(res.getPrice() * 100));
+                    Intent i = new Intent(requireContext(), CheckoutActivity.class);
+                    i.putExtra("amount", (int)(res.getReservation().getPrice() * 100));
+                    i.putExtra("roomId", res.getReservation().getRoomId());
+                    i.putExtra("checkInDate", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(res.getReservation().getCheckInDate()));
+                    i.putExtra("checkOutDate", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(res.getReservation().getCheckOutDate()));
+                    i.putExtra("numGuests", res.getReservation().getGuestCount());
                     startActivity(i);
                 } else {
                     Intent intent = new Intent(requireContext(), Login.class);
@@ -148,14 +175,13 @@ public class DashboardFragment extends Fragment {
 
             btnRemove.setOnClickListener(v -> {
                 ConfirmedBookingManager.removeReservation(res.getReservation());
-                Toast.makeText(getContext(), "Reservation removed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Reservation removed.", Toast.LENGTH_SHORT).show();
                 displayCurrentReservations();
             });
 
             currentReservationsContainer.addView(card);
         }
 
-        // Final total display
         tvTotalPrice.setText("Total: " + currencyFormat.format(total));
     }
 }

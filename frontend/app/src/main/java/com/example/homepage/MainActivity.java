@@ -20,6 +20,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_home);
+        Intent intent = getIntent();
+        if (intent != null && intent.getBooleanExtra("go_to_dashboard", false)) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new DashboardFragment())
+                    .commit();
+        }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 

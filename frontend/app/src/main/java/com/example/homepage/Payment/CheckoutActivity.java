@@ -13,6 +13,7 @@ import com.example.homepage.MainActivity;
 import com.example.homepage.R;
 import com.example.homepage.USER.User;
 import com.example.homepage.USER.UserInfoFetcher;
+import com.example.homepage.utils.ConfirmedBookingManager;
 import com.example.homepage.utils.ReservationManager;
 import com.example.homepage.BOOKING.sendBooking;
 import com.google.firebase.auth.FirebaseAuth;
@@ -183,8 +184,10 @@ public class CheckoutActivity extends AppCompatActivity {
             sendBooking.makeBooking(userId, roomId, checkInDate, checkOutDate, numGuests);
 
             Toast.makeText(this, "Booking confirmed!", Toast.LENGTH_LONG).show();
+            ConfirmedBookingManager.getConfirmedBookings().clear(); //clears confirmed booking
 
-            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            Intent i = new Intent(this, MainActivity.class);
+            i.putExtra("go_to_dashboard", true); //Tell MainActivity to show Dashboard
             startActivity(i);
             finish();
         }
