@@ -15,10 +15,13 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.homepage.BOOKING.BookingsFetcher;
 import com.example.homepage.MainActivity;
 import com.example.homepage.Payment.GuestFormActivity;
 import com.example.homepage.R;
+import com.example.homepage.USER.User;
 import com.example.homepage.USER.UserInfoFetcher;
+import com.example.homepage.utils.ReservationManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -26,6 +29,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+
+import java.util.ArrayList;
 
 public class Login extends AppCompatActivity {
 
@@ -47,35 +52,40 @@ public class Login extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
+
+        loginDisplay = findViewById(R.id.login_display);
+        loginButton = findViewById(R.id.login_button);
+        editTextEmail = findViewById(R.id.email);
+        editTextPassword = findViewById(R.id.password);
+        progressBar = findViewById(R.id.progress_bar);
+        continueGuest = findViewById(R.id.continue_guest);
+        registerButton = findViewById(R.id.register_button);
+
         auth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         mUser = auth.getCurrentUser();
 
-        if(mUser != null){
-            UserInfoFetcher.getUserInfo(mUser.getEmail());
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-
-        loginDisplay= findViewById(R.id.login_display);
         Intent intent = getIntent();
         boolean fromCheckout = intent.getBooleanExtra("from_checkout", false);
         Log.d("Fromcheckout", "val" + fromCheckout);
 
         if (fromCheckout) {
             loginDisplay.setText("You're almost There!");
-        } else {
-            loginDisplay.setText("Login");
-            loginDisplay.setTextSize(TypedValue.COMPLEX_UNIT_SP, 35);
         }
 
-        loginButton = findViewById(R.id.login_button);
-        editTextEmail = findViewById(R.id.email);
-        editTextPassword = findViewById(R.id.password);
-        mAuth = FirebaseAuth.getInstance();
-        progressBar = findViewById(R.id.progress_bar);
-        continueGuest = findViewById(R.id.continue_guest);
-        registerButton = findViewById(R.id.register_button);
+
+
+        if (mUser != null) {
+            UserInfoFetcher.getUserInfo(mUser.getEmail(), new UserInfoFetcher.UserIDCallback() {
+                @Override
+                public void onUserIdReceived(int userID) {
+                    BookingsFetcher.getBookings(userID);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        }
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,9 +110,7 @@ public class Login extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     progressBar.setVisibility(View.GONE);
                                     Toast.makeText(Login.this, "Successfully signed in!.", Toast.LENGTH_SHORT).show();
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     finish();
                                 } else {
                                     Toast.makeText(Login.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
@@ -115,8 +123,7 @@ public class Login extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Register.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(), Register.class));
                 finish();
             }
         });
@@ -125,14 +132,11 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (fromCheckout) {
-                    Intent i = new Intent(getApplicationContext(), GuestFormActivity.class);
-                    startActivity(i);
-                    finish();
+                    startActivity(new Intent(getApplicationContext(), GuestFormActivity.class));
                 } else {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 }
+                finish();
             }
         });
     }

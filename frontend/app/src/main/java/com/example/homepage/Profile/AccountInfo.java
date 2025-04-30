@@ -63,8 +63,6 @@ public class AccountInfo extends AppCompatActivity {
         mUser = auth.getCurrentUser();
 
 
-
-
         if (mUser != null) {
             accountInfoGroup.setVisibility(View.VISIBLE);
             guestInfoGroup.setVisibility(View.GONE);
@@ -137,7 +135,6 @@ public class AccountInfo extends AppCompatActivity {
                 ReservationsFragment reservationsFragment = new ReservationsFragment();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-                // Replace the current content (which is the AccountInfoActivity layout) with ReservationsFragment
                 transaction.replace(R.id.fragment_container, reservationsFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();

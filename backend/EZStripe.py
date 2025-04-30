@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 import stripe
+import json
 
-app = Flask(__name__)
+
+app = Flask(name)
 stripe.api_key = 'sk_test_51R65YnFQK7HmrpDOZ8MhB8waSHJG8dnhtt4oJGfiaFbhRW79rQ3dyz42r6GQkvd54jxQyl0en2pq13btXYQxuX0B008fDthRBe'
 
 @app.route('/payment-sheet', methods=['POST'])
@@ -15,12 +17,12 @@ def payment_sheet():
         first_name = data.get('first_name')
         last_name = data.get('last_name')
         email = data.get('email')
-        #reservations = data.get('reservations', [])
+        reservations = data.get('reservations', [])
 
         # Create customer
         customer = stripe.Customer.create(
             email= email,
-             name=f"{first_name} {last_name}",
+            name=f"{first_name} {last_name}",
         )
 
         # Create ephemeral key
@@ -32,11 +34,11 @@ def payment_sheet():
         paymentIntent = stripe.PaymentIntent.create(
             amount=amount * 10,
             metadata={
-                "amount": amount,
+                "amount": str(amount),
                 "first_name": first_name,
                 "last_name": last_name,
                 "email": email,
-                #"reservations": reservations
+                "reservations": json.dumps(reservations)
                 },
             currency='usd',
             customer=customer['id'],
@@ -55,5 +57,5 @@ def payment_sheet():
         return jsonify({"error": str(e)}), 500
 
 
-if __name__ == "__main__":
+if name == "main":
     app.run(debug=True, host="0.0.0.0", port=4242)

@@ -19,11 +19,15 @@ public class User {
 
     public static void setUserData(String firstName, String lastName, String dob, String email, int userID) {
         User user = getInstance();
-        user.firstName = firstName;
-        user.lastName = lastName;
+        user.firstName = capitalize(firstName);
+        user.lastName = capitalize(lastName);
         user.dob = dob;
         user.email = email;
         user.userID = userID;
+    }
+
+    private static String capitalize(String name){
+        return name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
     public static void clear() {

@@ -28,10 +28,6 @@
             android:name=".Profile.AccountInfo"
             android:exported="false" />
         <activity
-            android:name=".Payment.GuestFormActivity"
-            android:exported="false"
-            />
-        <activity
             android:name=".REGISTERLOGIN.Login"
             android:exported="true">
 

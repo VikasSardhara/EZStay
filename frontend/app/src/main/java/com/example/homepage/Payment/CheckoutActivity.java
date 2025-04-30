@@ -1,5 +1,12 @@
 package com.example.homepage.Payment;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import static com.example.homepage.USER.User.getInstance;
+
+import com.example.homepage.MainActivity;
+import com.example.homepage.USER.User;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,18 +16,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.homepage.MainActivity;
 import com.example.homepage.R;
 import com.example.homepage.USER.User;
-import com.example.homepage.USER.UserInfoFetcher;
 import com.example.homepage.utils.ConfirmedBookingManager;
 import com.example.homepage.utils.ReservationManager;
 import com.example.homepage.BOOKING.sendBooking;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.stripe.android.paymentsheet.*;
 import com.stripe.android.PaymentConfiguration;
-import com.stripe.android.paymentsheet.PaymentSheet;
-import com.stripe.android.paymentsheet.PaymentSheetResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,119 +41,124 @@ import java.nio.charset.StandardCharsets;
 
 public class CheckoutActivity extends AppCompatActivity {
 
+    PaymentSheet paymentSheet;
+    String paymentIntentClientSecret;
+    PaymentSheet.CustomerConfiguration customerConfig;
     private static final String TAG = "CheckoutActivity";
 
-    private PaymentSheet paymentSheet;
-    private String paymentIntentClientSecret;
-    private PaymentSheet.CustomerConfiguration customerConfig;
-    private FirebaseAuth auth;
-    private FirebaseUser mUser;
+    FirebaseUser mUser;
+    FirebaseAuth auth;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_checkout);
 
-        paymentSheet = new PaymentSheet(this, this::handlePaymentSheetResult);
-        auth = FirebaseAuth.getInstance();
-        mUser = auth.getCurrentUser();
+        paymentSheet = new PaymentSheet(this, new PaymentSheetResultCallback() {
+            @Override
+            public void onPaymentSheetResult(@NonNull PaymentSheetResult paymentSheetResult) {
+                handlePaymentSheetResult(paymentSheetResult);
+            }
+        });
 
-        if (mUser == null) {
-            Toast.makeText(this, "No user logged in.", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+        Intent i = getIntent();
+        int amount = i.getIntExtra("amount", 0);
 
-        if (User.getInstance().getEmail() == null) {
-            // Fetch user info if missing
-            UserInfoFetcher.getUserInfo(mUser.getEmail());
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection = null;
+                try {
+                    URL url = new URL("http://10.0.2.2:4242/payment-sheet");
+                    Log.d("URL", "Accessing: " + url);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setConnectTimeout(5000);
+                    urlConnection.setReadTimeout(5000);
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setRequestProperty("Content-Type", "application/json; utf-8");
 
-        Intent intent = getIntent();
-        int amount = intent.getIntExtra("amount", 0);
+                    urlConnection.setRequestProperty("Accept", "application/json");
 
-        new Thread(() -> {
-            HttpURLConnection urlConnection = null;
-            try {
-                URL url = new URL("http://10.0.2.2:4242/payment-sheet");
-                Log.d(TAG, "Accessing: " + url);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setConnectTimeout(5000);
-                urlConnection.setReadTimeout(5000);
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestProperty("Content-Type", "application/json; utf-8");
-                urlConnection.setRequestProperty("Accept", "application/json");
+                    Log.d("PaymentRequest", "Amount to be sent: " + amount);
 
-                JSONObject jsonParam = new JSONObject();
-                jsonParam.put("amount", amount);
+                    auth = FirebaseAuth.getInstance();
+                    mUser = auth.getCurrentUser();
 
-                if (mUser != null && User.getInstance().getEmail() != null) {
-                    User currentUser = User.getInstance();
-                    jsonParam.put("first_name", currentUser.getFirstName());
-                    jsonParam.put("last_name", currentUser.getLastName());
-                    jsonParam.put("email", currentUser.getEmail());
+                    JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("amount", amount);
 
-                    JSONArray reservationArray = new JSONArray();
-                    for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
-                        JSONObject resJson = new JSONObject();
-                        resJson.put("size", res.roomType);
-                        resJson.put("type", res.smokingPreference);
-                        resJson.put("check_in", res.checkIN);
-                        resJson.put("check_out", res.checkOUT);
-                        reservationArray.put(resJson);
-                    }
-                    jsonParam.put("reservations", reservationArray);
-                } else {
-                    jsonParam.put("first_name", intent.getStringExtra("first_name"));
-                    jsonParam.put("last_name", intent.getStringExtra("last_name"));
-                    jsonParam.put("email", intent.getStringExtra("email"));
-                }
+                    Intent i = getIntent();
 
-                OutputStream os = urlConnection.getOutputStream();
-                OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-                writer.write(jsonParam.toString());
-                writer.flush();
-                writer.close();
-                os.close();
+                    Log.d("getcurrent", "hi" + ReservationManager.getCurrentReservations());
 
-                int responseCode = urlConnection.getResponseCode();
-                if (responseCode == 200) {
-                    InputStream is = urlConnection.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                    }
-                    String jsonResponse = sb.toString();
-                    is.close();
-
-                    Log.d(TAG, "PaymentResponse: " + jsonResponse);
-                    JSONObject result = new JSONObject(jsonResponse);
-
-                    runOnUiThread(() -> {
-                        try {
-                            customerConfig = new PaymentSheet.CustomerConfiguration(
-                                    result.getString("customer"),
-                                    result.getString("ephemeralKey")
-                            );
-                            paymentIntentClientSecret = result.getString("paymentIntent");
-                            PaymentConfiguration.init(getApplicationContext(), result.getString("publishableKey"));
-                            presentPaymentSheet();
-                        } catch (JSONException e) {
-                            Log.e(TAG, "Error parsing Stripe response", e);
-                            Toast.makeText(this, "Error initializing payment", Toast.LENGTH_SHORT).show();
+                    if(mUser != null) {
+                        jsonParam.put("first_name", getInstance().getFirstName());
+                        jsonParam.put("last_name", getInstance().getLastName());
+                        jsonParam.put("email", getInstance().getEmail());
+                        JSONArray reservationArray = new JSONArray();
+                        for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
+                            JSONObject resJson = new JSONObject();
+                            resJson.put("roomId", res.roomID);
+                            resJson.put("check_in", res.checkIN);
+                            resJson.put("check_out", res.checkOUT);
+                            reservationArray.put(resJson);
                         }
-                    });
-                } else {
-                    Log.e(TAG, "Server error code: " + responseCode);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Payment init failed", e);
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
+                        jsonParam.put("reservations", reservationArray);
+                        Log.d("array", "hi" + reservationArray);
+                    }
+                    else {
+                        jsonParam.put("first_name", i.getStringExtra("first_name"));
+                        jsonParam.put("last_name", i.getStringExtra("last_name"));
+                        jsonParam.put("email", i.getStringExtra("email"));
+                        //for(ConfirmedBookingManager.ConfirmedReservation res : Res
+                    }
+
+
+                    OutputStream os = urlConnection.getOutputStream();
+                    OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+                    writer.write(jsonParam.toString());
+                    writer.flush();
+                    writer.close();
+                    os.close();
+
+                    int responseCode = urlConnection.getResponseCode();
+
+                    if (responseCode == 200) {
+                        InputStream is = urlConnection.getInputStream();
+                        byte[] bytes = is.readAllBytes();
+                        String jsonResponse = new String(bytes, StandardCharsets.UTF_8);
+
+                        Log.d("PaymentResponse", "Response: " + jsonResponse);
+
+                        final JSONObject result = new JSONObject(jsonResponse);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    customerConfig = new PaymentSheet.CustomerConfiguration(
+                                            result.getString("customer"),
+                                            result.getString("ephemeralKey")
+                                    );
+                                    paymentIntentClientSecret = result.getString("paymentIntent");
+                                    PaymentConfiguration.init(getApplicationContext(), result.getString("publishableKey"));
+                                    presentPaymentSheet();
+                                } catch (JSONException e) {
+                                    Log.e(TAG, "Error parsing the response", e);
+                                }
+                            }
+                        });
+                    } else {
+                        Log.e(TAG, "Server returned non-OK code: " + responseCode);
+                    }
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to post data: " + e.getMessage(), e);
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
                 }
             }
         }).start();
@@ -163,19 +172,19 @@ public class CheckoutActivity extends AppCompatActivity {
         paymentSheet.presentWithPaymentIntent(paymentIntentClientSecret, configuration);
     }
 
-    private void handlePaymentSheetResult(@NonNull PaymentSheetResult result) {
-        if (result instanceof PaymentSheetResult.Canceled) {
+    private void handlePaymentSheetResult(@NonNull PaymentSheetResult paymentSheetResult) {
+        if (paymentSheetResult instanceof PaymentSheetResult.Canceled) {
             Log.d(TAG, "Payment canceled");
-            Toast.makeText(this, "Payment canceled", Toast.LENGTH_SHORT).show();
-        } else if (result instanceof PaymentSheetResult.Failed) {
-            Log.e(TAG, "Payment failed", ((PaymentSheetResult.Failed) result).getError());
-            Toast.makeText(this, "Payment failed", Toast.LENGTH_SHORT).show();
-        } else if (result instanceof PaymentSheetResult.Completed) {
-            Log.d(TAG, "Payment successful");
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(i);
+        } else if (paymentSheetResult instanceof PaymentSheetResult.Failed) {
+            Log.e(TAG, "Payment failed", ((PaymentSheetResult.Failed) paymentSheetResult).getError());
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(i);
+        } else if (paymentSheetResult instanceof PaymentSheetResult.Completed) {
+            Log.d(TAG, "Payment completed successfully!");
 
-            User currentUser = User.getInstance();
-            int userId = currentUser.getUserID();
-
+            int userId = getInstance().getUserID();
             int roomId = getIntent().getIntExtra("roomId", -1);
             String checkInDate = getIntent().getStringExtra("checkInDate");
             String checkOutDate = getIntent().getStringExtra("checkOutDate");
@@ -184,12 +193,10 @@ public class CheckoutActivity extends AppCompatActivity {
             sendBooking.makeBooking(userId, roomId, checkInDate, checkOutDate, numGuests);
 
             Toast.makeText(this, "Booking confirmed!", Toast.LENGTH_LONG).show();
-            ConfirmedBookingManager.getConfirmedBookings().clear(); //clears confirmed booking
+            ConfirmedBookingManager.getConfirmedBookings().clear();
 
-            Intent i = new Intent(this, MainActivity.class);
-            i.putExtra("go_to_dashboard", true); //Tell MainActivity to show Dashboard
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(i);
-            finish();
         }
     }
 }

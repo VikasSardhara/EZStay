@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class BookingsFetcher {
-    public static void getBookings(int uID, boolean ifExpired, BookingsListener callback) {
+    public static void getBookings(int uID) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -72,16 +72,6 @@ public class BookingsFetcher {
                         ReservationManager.getCurrentReservations().addAll(futureBookings);
                         Log.d("futurebookings", "hi"+ ReservationManager.getCurrentReservations());
                         ReservationManager.getPastReservations().addAll(expiredBookings);
-
-
-                        if (ifExpired){
-                            callback.onBookingsReceived(expiredBookings);
-                            Log.d("Booking", "Received bookings data, invoking callback...");
-                        }
-                        else {
-                            callback.onBookingsReceived(futureBookings);
-                            Log.d("Booking", "Received bookings data, invoking callback...");
-                        }
 
                     } else {
                         Log.e("Booking", "Failed to fetch bookings. Response code: " + responseCode);
