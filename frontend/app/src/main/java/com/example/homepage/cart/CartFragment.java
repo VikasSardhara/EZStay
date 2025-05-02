@@ -15,22 +15,25 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.homepage.R;
 import com.example.homepage.REGISTERLOGIN.Login;
 import com.example.homepage.dashboard.DashboardFragment;
 import com.example.homepage.utils.BookingCart;
 import com.example.homepage.utils.ConfirmedBookingManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 
 public class CartFragment extends Fragment {
 
@@ -77,6 +80,7 @@ public class CartFragment extends Fragment {
             View card = inflater.inflate(R.layout.item_cart_reservation, cartContainer, false);
 
             TextView tvDetails = card.findViewById(R.id.tvReservationDetails);
+            TextView tvPrice = card.findViewById(R.id.tvReservationPrice);
             Button btnRemove = card.findViewById(R.id.btnRemove);
             Button btnConfirm = card.findViewById(R.id.btnConfirmBooking);
             Button btnPay = card.findViewById(R.id.btnPayment);
@@ -89,11 +93,32 @@ public class CartFragment extends Fragment {
                     + "Price: " + currencyFormat.format(res.getPrice());
 
             tvDetails.setText(info);
+            tvPrice.setText("Price: " + currencyFormat.format(res.getPrice()));
 
             btnRemove.setOnClickListener(v -> {
                 BookingCart.removeItem(res);
-                highlightDashboardTab();
-                navigateToDashboard();
+                Toast.makeText(getContext(), "Removed from cart", Toast.LENGTH_SHORT).show();
+                displayCartItems();
+
+                String checkIn = String.valueOf(res.getCheckInDate());
+                String checkOut = String.valueOf(res.getCheckOutDate());
+                String roomId = res.getRoomType().equalsIgnoreCase("King") ? "101" : "102";
+
+                // Use StringRequest instead of JsonObjectRequest
+                String unlockUrl = "http://10.0.2.2:5000/lock";
+                // Add the parameters to the URL as query parameters
+                unlockUrl += "?room_id=" + roomId + "&check_in=" + checkIn + "&check_out=" + checkOut;
+
+                RequestQueue queue = Volley.newRequestQueue(requireContext());
+
+                StringRequest deleteRequest = new StringRequest(
+                        Request.Method.DELETE,
+                        unlockUrl,
+                        response -> Toast.makeText(getContext(), "Backend lock removed", Toast.LENGTH_SHORT).show(),
+                        error -> Toast.makeText(getContext(), "Failed to remove lock: " + error.toString(), Toast.LENGTH_SHORT).show()
+                );
+
+                queue.add(deleteRequest);
             });
 
             btnConfirm.setOnClickListener(v -> {
@@ -109,7 +134,7 @@ public class CartFragment extends Fragment {
 
                 if (mUser != null) {
                     Intent i = new Intent(requireContext(), com.example.homepage.Payment.CheckoutActivity.class);
-                    i.putExtra("amount", (int)(res.getPrice() * 100));
+                    i.putExtra("amount", (int)(res.getPrice()));
                     i.putExtra("email", mUser.getEmail());
                     i.putExtra("roomId", res.getRoomId());
                     i.putExtra("checkInDate", sdf.format(res.getCheckInDate()));  // be sure format is yyyy-MM-dd if backend expects it
@@ -119,7 +144,7 @@ public class CartFragment extends Fragment {
                 } else {
                     Intent intent = new Intent(requireContext(), Login.class);
                     intent.putExtra("from_checkout", true);
-                    intent.putExtra("amount", (int)(res.getPrice() * 100));
+                    intent.putExtra("amount", (int)(res.getPrice()));
                     startActivity(intent);
                 }
             });

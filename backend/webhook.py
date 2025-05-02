@@ -1,61 +1,106 @@
-from flask import Flask, request, jsonify
-import stripe
 import json
+import os
+import stripe
+import requests
+import ast 
 
+from flask import Flask, jsonify, request
 
-app = Flask(name)
 stripe.api_key = 'sk_test_51R65YnFQK7HmrpDOZ8MhB8waSHJG8dnhtt4oJGfiaFbhRW79rQ3dyz42r6GQkvd54jxQyl0en2pq13btXYQxuX0B008fDthRBe'
+endpoint_secret = 'whsec_0zO4XvfTM1kJl1S6TrbfwuKgOZh3PL9D'
 
-@app.route('/payment-sheet', methods=['POST'])
-def payment_sheet():
+app = Flask(__name__)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    event = None
+    payload = request.data
+
     try:
-        data = request.get_json()
-        print("Received payment-sheet request...")
-        print("Request body:", data)
+        event = json.loads(payload)
+    except json.decoder.JSONDecodeError as e:
+        print('⚠️  Webhook error while parsing basic request.' + str(e))
+        return jsonify(success=False)
 
-        amount = data.get('amount')
-        first_name = data.get('first_name')
-        last_name = data.get('last_name')
-        email = data.get('email')
-        reservations = data.get('reservations', [])
+    if endpoint_secret:
+        sig_header = request.headers.get('stripe-signature')
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, endpoint_secret
+            )
+        except stripe.error.SignatureVerificationError as e:
+            print('⚠️  Webhook signature verification failed.' + str(e))
+            return jsonify(success=False)
 
-        # Create customer
-        customer = stripe.Customer.create(
-            email= email,
-            name=f"{first_name} {last_name}",
-        )
+    if event and event['type'] == 'payment_intent.succeeded':
+        payment_intent = event['data']['object']  # Stripe PaymentIntent object
 
-        # Create ephemeral key
-        ephemeralKey = stripe.EphemeralKey.create(
-            customer=customer['id'],
-            stripe_version='2025-02-24.acacia',
-        )
+        email = payment_intent['metadata'].get('email')
+        first_name = payment_intent['metadata'].get('first_name', '')
+        last_name = payment_intent['metadata'].get('last_name', '')
+        full_name = f"{first_name} {last_name}".strip()
 
-        paymentIntent = stripe.PaymentIntent.create(
-            amount=amount * 10,
-            metadata={
-                "amount": str(amount),
-                "first_name": first_name,
-                "last_name": last_name,
-                "email": email,
-                "reservations": json.dumps(reservations)
-                },
-            currency='usd',
-            customer=customer['id'],
-            automatic_payment_methods={'enabled': True},
-        )
+        reservation_data_str = payment_intent['metadata'].get('reservations', '[]')
+        try:
+            reservations = ast.literal_eval(reservation_data_str)
+        except:
+            reservations = []
 
-        return jsonify(
-            paymentIntent=paymentIntent.client_secret,
-            ephemeralKey=ephemeralKey.secret,
-            customer=customer.id,
-            publishableKey='pk_test_51R65YnFQK7HmrpDOoWGJb8R1Ibtx6yKxA7Vue9hK0yzx0IMUerpXXO6YaiYC0wxLhTar6AUtNAd5nONMsbXQCK9T00KbjRuJL5'
-        )
+        # Send confirmation email
+        send_confirmation_email(to_email=email, guest_name=full_name, reservations=reservations)
+        print('✅ Payment for {} succeeded'.format(payment_intent['amount']))
 
-    except Exception as e:
-        print("Error during payment creation:", e)
-        return jsonify({"error": str(e)}), 500
+    else:
+        print('⚠️  Unhandled event type {}'.format(event['type']))
+
+    return jsonify(success=True)
 
 
-if name == "main":
-    app.run(debug=True, host="0.0.0.0", port=4242)
+def send_confirmation_email(to_email, guest_name, reservations):
+    api_key = "re_GGbAPqaf_7ixDqTRVz1koQnP1N97mGJ6v"
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    # Build reservation details into HTML format
+    reservation_html = ""
+    for r in reservations:
+        room_Id = r.get('roomId', 'N/A')  
+        check_in = r.get('check_in', 'N/A')
+        check_out = r.get('check_out', 'N/A')
+
+        reservation_html += f"""
+        <div style="margin-bottom: 20px;">
+            <strong>Room ID:</strong> {room_Id}<br/>
+            <strong>Check-in:</strong> {check_in}<br/>
+            <strong>Check-out:</strong> {check_out}<br/>
+        </div>
+        """
+
+    html_body = f"""
+    <h2>Hi {guest_name},</h2>
+    <p>Thanks for booking with <strong>EZStay</strong>!</p>
+    <p>Here are your reservation details:</p>
+    {reservation_html}
+    <p>We look forward to hosting you! 🏨</p>
+    """
+
+    data = {
+        "from": "EZStay <onboarding@resend.dev>",
+        "to": to_email,
+        "subject": "Your EZStay Booking Confirmation",
+        "html": html_body
+    }
+
+    response = requests.post("https://api.resend.com/emails", headers=headers, json=data)
+
+    print("Email Status:", response.status_code)
+    print("API Key:", api_key)
+
+    print("Email Response:", response.json())
+
+
+if __name__ == '__main__':
+    app.run(port=3000, debug=True)

@@ -51,6 +51,9 @@ public class ReservationsFragment extends Fragment {
         LinearLayout reservationLayout = new LinearLayout(getContext());
         reservationLayout.setOrientation(LinearLayout.HORIZONTAL);
 
+        ReservationManager.getCurrentReservations().clear();
+        BookingsFetcher.getBookings(user.getUserID());
+
         if (ReservationManager.getCurrentReservations().isEmpty()) {
             Log.d("ReservationsFragment", "No current reservations to display.");
             TextView noData = new TextView(getContext());
