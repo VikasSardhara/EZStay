@@ -51,6 +51,7 @@ public class ReservationsFragment extends Fragment {
         LinearLayout reservationLayout = new LinearLayout(getContext());
         reservationLayout.setOrientation(LinearLayout.HORIZONTAL);
 
+<<<<<<< HEAD
         BookingsFetcher.getBookings(user.getUserID(), new BookingsFetcher.BookingsListener() {
             @Override
             public void onBookingsReceived(ArrayList<ReservationManager.Reservation> bookings) {
@@ -64,6 +65,29 @@ public class ReservationsFragment extends Fragment {
                     for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
                         Log.d("ReservationsFragment", "Fetching room info for room ID: " + res.roomID);
                         RoomSearch.getRoomById(res.roomID, new RoomSearch.RoomSearchCallback() {
+=======
+        ReservationManager.getCurrentReservations().clear();
+        BookingsFetcher.getBookings(user.getUserID());
+
+        if (ReservationManager.getCurrentReservations().isEmpty()) {
+            Log.d("ReservationsFragment", "No current reservations to display.");
+            TextView noData = new TextView(getContext());
+            noData.setText("No future reservations.");
+            previousReservationsContainer.addView(noData);
+        } else {
+            Log.d("ReservationsFragment", "Displaying " + ReservationManager.getCurrentReservations().size() + " current reservations.");
+            for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
+                Log.d("ReservationsFragment", "Fetching room info for room ID: " + res.roomID);
+                RoomSearch.getRoomById(res.roomID, new RoomSearch.RoomSearchCallback() {
+                    @Override
+                    public void onRoomFound(Room room) {
+                        if (room == null) {
+                            Log.e("ROOMFOUND", "Room not found for room ID: " + res.roomID);
+                            return;
+                        }
+                        Log.d("ROOMFOUND", "Room found: " + room.getType() + ", Size: " + room.getSize());
+                        requireActivity().runOnUiThread(new Runnable() {
+>>>>>>> 6cbafd9228a8bddc01ac6e6983dfcade6cd9d1fb
                             @Override
                             public void onRoomFound(Room room) {
                                 if (room == null) {
