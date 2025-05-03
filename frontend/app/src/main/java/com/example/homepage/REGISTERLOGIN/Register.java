@@ -1,6 +1,5 @@
 package com.example.homepage.REGISTERLOGIN;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,11 +15,9 @@ import android.widget.Toast;
 
 
 import com.example.homepage.R;
-import com.example.homepage.REGISTERLOGIN.Register2;
+import com.example.homepage.USER.DOBPicker;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Calendar;
 
 public class Register extends AppCompatActivity {
 
@@ -52,17 +49,12 @@ public class Register extends AppCompatActivity {
         editTextDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePicker = new DatePickerDialog(Register.this, (view, selectedYear, selectedMonth, selectedDay) -> {
-                    String selectedDate = (selectedMonth + 1) + "/" + selectedDay + "/" + selectedYear;
-                    editTextDOB.setText(selectedDate);
-                }, year, month, day);
-
-                datePicker.show();
+                DOBPicker.showDatePicker(Register.this, new DOBPicker.DOBSelectedCallback() {
+                    @Override
+                    public void onValidDOBSelected(String formattedDate) {
+                        editTextDOB.setText(formattedDate);
+                    }
+                });
             }
         });
 
@@ -76,8 +68,8 @@ public class Register extends AppCompatActivity {
                 String email = String.valueOf(editTextEmail.getText());
                 String dob = String.valueOf(editTextDOB.getText());
 
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(Register.this, "Please enter email", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(email) || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    Toast.makeText(Register.this, "Please enter valid email", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -94,6 +86,7 @@ public class Register extends AppCompatActivity {
                 finish();
             }
         });
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

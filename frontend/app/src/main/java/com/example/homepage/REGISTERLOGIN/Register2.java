@@ -90,8 +90,6 @@ public class Register2 extends AppCompatActivity {
             }
 
 
-
-
         });
     }
 }

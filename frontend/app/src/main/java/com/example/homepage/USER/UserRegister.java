@@ -9,6 +9,8 @@ import java.net.URL;
 public class UserRegister {
 
     public static void registerUser(String firstName, String lastName, String dob, String email,int userID) {
+        Log.d("UserRegister", "registerUser called");
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -18,10 +20,12 @@ public class UserRegister {
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("POST");
                     urlConnection.setRequestProperty("Content-Type", "application/json");
-                    urlConnection.setConnectTimeout(5000);
-                    urlConnection.setReadTimeout(5000);
+                    urlConnection.setConnectTimeout(10000);
+                    urlConnection.setReadTimeout(10000);
                     urlConnection.setDoOutput(true);
                     urlConnection.setDoInput(true);
+
+                    Log.d("DOB", "dob"+ dob);
 
                     // Create JSON object with data
                     JSONObject jsonParam = new JSONObject();

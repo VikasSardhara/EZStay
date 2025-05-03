@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class BookingsFetcher {
-    public static void getBookings(int uID) {
+    public static void getBookings(int uID, BookingsListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -70,6 +70,8 @@ public class BookingsFetcher {
                         ReservationManager.getCurrentReservations().clear();
                         ReservationManager.getPastReservations().clear();
                         ReservationManager.getCurrentReservations().addAll(futureBookings);
+                        listener.onBookingsReceived(futureBookings);
+
                         Log.d("futurebookings", "hi"+ ReservationManager.getCurrentReservations());
                         ReservationManager.getPastReservations().addAll(expiredBookings);
 

@@ -11,7 +11,8 @@ import java.nio.charset.StandardCharsets;
 
 public class UserInfoFetcher {
 
-    public static void getUserInfo(String email, UserIDCallback callback) {
+    public static void getUserInfo(String email) {
+        Log.d("UserInfoFetcher", "Called getUserInfo with email: " + email);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -49,7 +50,6 @@ public class UserInfoFetcher {
                         int userID = identified_user.getInt("user_id");
 
                         User.setUserData(firstname, lastname, dob, email, userID);
-                        callback.onUserIdReceived(userID);
 
                     } else {
                         Log.e("Error", "Unable to retrieve user info. Response code: " + responseCode);

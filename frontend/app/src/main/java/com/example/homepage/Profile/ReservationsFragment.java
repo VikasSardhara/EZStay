@@ -51,66 +51,69 @@ public class ReservationsFragment extends Fragment {
         LinearLayout reservationLayout = new LinearLayout(getContext());
         reservationLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-        if (ReservationManager.getCurrentReservations().isEmpty()) {
-            Log.d("ReservationsFragment", "No current reservations to display.");
-            TextView noData = new TextView(getContext());
-            noData.setText("No future reservations.");
-            previousReservationsContainer.addView(noData);
-        } else {
-            Log.d("ReservationsFragment", "Displaying " + ReservationManager.getCurrentReservations().size() + " current reservations.");
-            for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
-                Log.d("ReservationsFragment", "Fetching room info for room ID: " + res.roomID);
-                RoomSearch.getRoomById(res.roomID, new RoomSearch.RoomSearchCallback() {
-                    @Override
-                    public void onRoomFound(Room room) {
-                        if (room == null) {
-                            Log.e("ROOMFOUND", "Room not found for room ID: " + res.roomID);
-                            return;
-                        }
-                        Log.d("ROOMFOUND", "Room found: " + room.getType() + ", Size: " + room.getSize());
-                        requireActivity().runOnUiThread(new Runnable() {
+        BookingsFetcher.getBookings(user.getUserID(), new BookingsFetcher.BookingsListener() {
+            @Override
+            public void onBookingsReceived(ArrayList<ReservationManager.Reservation> bookings) {
+                if (ReservationManager.getCurrentReservations().isEmpty()) {
+                    Log.d("ReservationsFragment", "No current reservations to display.");
+                    TextView noData = new TextView(getContext());
+                    noData.setText("No future reservations.");
+                    previousReservationsContainer.addView(noData);
+                } else {
+                    Log.d("ReservationsFragment", "Displaying " + ReservationManager.getCurrentReservations().size() + " current reservations.");
+                    for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
+                        Log.d("ReservationsFragment", "Fetching room info for room ID: " + res.roomID);
+                        RoomSearch.getRoomById(res.roomID, new RoomSearch.RoomSearchCallback() {
                             @Override
-                            public void run() {
-                                TextView bookingText = new TextView(getContext());
-                                LinearLayout reservationLayout = new LinearLayout(getContext());
-                                reservationLayout.setOrientation(LinearLayout.HORIZONTAL);
-                                ImageView roomImage = new ImageView(getContext());
-
-                                if (room.getSize().equals("King")) {
-                                    roomImage.setImageResource(R.drawable.king_room);
-                                } else {
-                                    roomImage.setImageResource(R.drawable.queen_room);
+                            public void onRoomFound(Room room) {
+                                if (room == null) {
+                                    Log.e("ROOMFOUND", "Room not found for room ID: " + res.roomID);
+                                    return;
                                 }
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(350, 250);
-                                roomImage.setLayoutParams(params);
-                                String displayText = "Booking ID: " + res.bookingID + "\n" +
-                                        "Room ID: " + res.roomID + "\n" +
-                                        "Room Type: " + room.getType() + "\n" +
-                                        "Room Size: " + room.getSize() + "\n" +
-                                        "Check-in: " + res.checkIN + "\n" +
-                                        "Check-out: " + res.checkOUT + "\n" +
-                                        "Guests: " + res.guestCount;
+                                Log.d("ROOMFOUND", "Room found: " + room.getType() + ", Size: " + room.getSize());
+                                requireActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        TextView bookingText = new TextView(getContext());
+                                        LinearLayout reservationLayout = new LinearLayout(getContext());
+                                        reservationLayout.setOrientation(LinearLayout.HORIZONTAL);
+                                        ImageView roomImage = new ImageView(getContext());
 
-                                bookingText.setText(displayText);
-                                bookingText.setPadding(0, 0, 0, 100);
+                                        if (room.getSize().equals("King")) {
+                                            roomImage.setImageResource(R.drawable.king_room);
+                                        } else {
+                                            roomImage.setImageResource(R.drawable.queen_room);
+                                        }
 
-                                LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(350, 250);
+                                        roomImage.setLayoutParams(params);
 
-                                bookingText.setLayoutParams(textParams);
+                                        String displayText = "Booking ID: " + res.bookingID + "\n" +
+                                                "Room ID: " + res.roomID + "\n" +
+                                                "Room Type: " + room.getType() + "\n" +
+                                                "Room Size: " + room.getSize() + "\n" +
+                                                "Check-in: " + res.checkIN + "\n" +
+                                                "Check-out: " + res.checkOUT + "\n" +
+                                                "Guests: " + res.guestCount;
 
-                                reservationLayout.addView(bookingText);
-                                reservationLayout.addView(roomImage);
+                                        bookingText.setText(displayText);
+                                        bookingText.setPadding(0, 0, 0, 100);
 
-                                previousReservationsContainer.addView(reservationLayout);
+                                        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+                                        bookingText.setLayoutParams(textParams);
 
+                                        reservationLayout.addView(bookingText);
+                                        reservationLayout.addView(roomImage);
+
+                                        previousReservationsContainer.addView(reservationLayout);
+                                    }
+                                });
                             }
                         });
                     }
-                });
+                }
             }
-        }
+        });
         return view;
     }
 }
-
-
