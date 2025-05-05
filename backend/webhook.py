@@ -68,6 +68,7 @@ def send_confirmation_email(to_email, guest_name, reservations):
         room_Id = r.get('roomId', 'N/A')  
         check_in = r.get('check_in', 'N/A')
         check_out = r.get('check_out', 'N/A')
+        
 
         reservation_html += f"""
         <div style="margin-bottom: 20px;">

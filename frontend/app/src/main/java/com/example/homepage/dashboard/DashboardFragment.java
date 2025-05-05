@@ -165,14 +165,8 @@ public class DashboardFragment extends Fragment {
                 } else {
                     intent = new Intent(requireContext(), Login.class);
                     intent.putExtra("from_checkout", true);
+
                 }
-
-                intent.putExtra("amount", (int)(res.getReservation().getPrice() * 100));
-                intent.putExtra("roomId", res.getReservation().getRoomId());
-                intent.putExtra("checkInDate", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(res.getReservation().getCheckInDate()));
-                intent.putExtra("checkOutDate", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(res.getReservation().getCheckOutDate()));
-                intent.putExtra("numGuests", res.getReservation().getGuestCount());
-
                 startActivity(intent);
             });
 

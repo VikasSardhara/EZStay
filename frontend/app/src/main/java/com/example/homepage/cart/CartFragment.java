@@ -130,24 +130,6 @@ public class CartFragment extends Fragment {
                 navigateToDashboard();
             });
 
-            btnPay.setOnClickListener(v -> {
-                FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (mUser != null) {
-                    Intent i = new Intent(requireContext(), com.example.homepage.Payment.CheckoutActivity.class);
-                    i.putExtra("amount", (int)(res.getPrice()));
-                    i.putExtra("email", mUser.getEmail());
-                    i.putExtra("roomId", res.getRoomId());
-                    i.putExtra("checkInDate", sdf.format(res.getCheckInDate()));  // be sure format is yyyy-MM-dd if backend expects it
-                    i.putExtra("checkOutDate", sdf.format(res.getCheckOutDate()));
-                    i.putExtra("numGuests", res.getGuestCount());
-                    startActivity(i);
-                } else {
-                    Intent intent = new Intent(requireContext(), Login.class);
-                    intent.putExtra("from_checkout", true);
-                    intent.putExtra("amount", (int)(res.getPrice()));
-                    startActivity(intent);
-                }
-            });
             cartContainer.addView(card);
         }
     }

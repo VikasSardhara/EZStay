@@ -38,6 +38,11 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+import com.example.homepage.utils.ConfirmedBookingManager;
+
 
 public class CheckoutActivity extends AppCompatActivity {
 
@@ -52,6 +57,8 @@ public class CheckoutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         super.onCreate(savedInstanceState);
 
         paymentSheet = new PaymentSheet(this, new PaymentSheetResultCallback() {
@@ -90,28 +97,33 @@ public class CheckoutActivity extends AppCompatActivity {
 
                     Intent i = getIntent();
 
-                    Log.d("getcurrent", "hi" + ReservationManager.getCurrentReservations());
-
                     if(mUser != null) {
                         jsonParam.put("first_name", getInstance().getFirstName());
                         jsonParam.put("last_name", getInstance().getLastName());
                         jsonParam.put("email", getInstance().getEmail());
-                        JSONArray reservationArray = new JSONArray();
-                        for (ReservationManager.Reservation res : ReservationManager.getCurrentReservations()) {
-                            JSONObject resJson = new JSONObject();
-                            resJson.put("roomId", res.roomID);
-                            resJson.put("check_in", res.checkIN);
-                            resJson.put("check_out", res.checkOUT);
-                            reservationArray.put(resJson);
-                        }
-                        jsonParam.put("reservations", reservationArray);
-                        Log.d("array", "hi" + reservationArray);
                     }
                     else {
                         jsonParam.put("first_name", i.getStringExtra("first_name"));
                         jsonParam.put("last_name", i.getStringExtra("last_name"));
                         jsonParam.put("email", i.getStringExtra("email"));
                     }
+                    JSONArray reservationArray = new JSONArray();
+
+                    for (ConfirmedBookingManager.ConfirmedReservation res : ConfirmedBookingManager.getConfirmedBookings()) {
+                        JSONObject resJson = new JSONObject();
+
+                        resJson.put("roomId", res.getReservation().getRoomId());
+                        resJson.put("room_type", res.getReservation().getRoomType());
+                        resJson.put("check_in", res.getReservation().getCheckInDate());
+                        resJson.put("check_out", res.getReservation().getCheckOutDate());;
+                        resJson.put("guest_num", res.getReservation().getGuestCount());
+
+                        Log.d("array", "hi" + res.getReservation().getRoomType());
+                        reservationArray.put(resJson);
+                    }
+                    jsonParam.put("reservations", reservationArray);
+                    Log.d("array", "hi" + reservationArray);
+                    Log.d("array", "hi" + ConfirmedBookingManager.getConfirmedBookings());
 
 
                     OutputStream os = urlConnection.getOutputStream();
@@ -182,8 +194,9 @@ public class CheckoutActivity extends AppCompatActivity {
             startActivity(i);
         } else if (paymentSheetResult instanceof PaymentSheetResult.Completed) {
             Log.d(TAG, "Payment completed successfully!");
+            ConfirmedBookingManager.clearConfirmedBookings();
 
-            int userId = getInstance().getUserID();
+        /*    int userId = getInstance().getUserID();
             int roomId = getIntent().getIntExtra("roomId", -1);
             String checkInDate = getIntent().getStringExtra("checkInDate");
             String checkOutDate = getIntent().getStringExtra("checkOutDate");
@@ -193,7 +206,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
             Toast.makeText(this, "Booking confirmed!", Toast.LENGTH_LONG).show();
             ConfirmedBookingManager.getConfirmedBookings().clear();
-
+*/
             Intent i = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(i);
         }
