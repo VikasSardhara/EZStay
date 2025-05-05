@@ -28,6 +28,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -131,7 +132,6 @@ public class CartFragment extends Fragment {
 
             btnPay.setOnClickListener(v -> {
                 FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-
                 if (mUser != null) {
                     Intent i = new Intent(requireContext(), com.example.homepage.Payment.CheckoutActivity.class);
                     i.putExtra("amount", (int)(res.getPrice()));
@@ -148,8 +148,6 @@ public class CartFragment extends Fragment {
                     startActivity(intent);
                 }
             });
-
-
             cartContainer.addView(card);
         }
     }

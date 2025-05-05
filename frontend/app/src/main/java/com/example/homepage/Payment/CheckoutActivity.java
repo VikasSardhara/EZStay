@@ -111,7 +111,6 @@ public class CheckoutActivity extends AppCompatActivity {
                         jsonParam.put("first_name", i.getStringExtra("first_name"));
                         jsonParam.put("last_name", i.getStringExtra("last_name"));
                         jsonParam.put("email", i.getStringExtra("email"));
-                        //for(ConfirmedBookingManager.ConfirmedReservation res : Res
                     }
 
 

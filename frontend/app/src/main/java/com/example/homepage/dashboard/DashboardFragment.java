@@ -158,19 +158,22 @@ public class DashboardFragment extends Fragment {
 
             btnPay.setOnClickListener(v -> {
                 FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+                Intent intent;
+
                 if (mUser != null) {
-                    Intent i = new Intent(requireContext(), CheckoutActivity.class);
-                    i.putExtra("amount", (int)(res.getReservation().getPrice() * 100));
-                    i.putExtra("roomId", res.getReservation().getRoomId());
-                    i.putExtra("checkInDate", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(res.getReservation().getCheckInDate()));
-                    i.putExtra("checkOutDate", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(res.getReservation().getCheckOutDate()));
-                    i.putExtra("numGuests", res.getReservation().getGuestCount());
-                    startActivity(i);
+                    intent = new Intent(requireContext(), CheckoutActivity.class);
                 } else {
-                    Intent intent = new Intent(requireContext(), Login.class);
+                    intent = new Intent(requireContext(), Login.class);
                     intent.putExtra("from_checkout", true);
-                    startActivity(intent);
                 }
+
+                intent.putExtra("amount", (int)(res.getReservation().getPrice() * 100));
+                intent.putExtra("roomId", res.getReservation().getRoomId());
+                intent.putExtra("checkInDate", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(res.getReservation().getCheckInDate()));
+                intent.putExtra("checkOutDate", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(res.getReservation().getCheckOutDate()));
+                intent.putExtra("numGuests", res.getReservation().getGuestCount());
+
+                startActivity(intent);
             });
 
             btnRemove.setOnClickListener(v -> {

@@ -17,11 +17,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.homepage.BOOKING.BookingsFetcher;
 import com.example.homepage.MainActivity;
+import com.example.homepage.Payment.CheckoutActivity;
 import com.example.homepage.Payment.GuestFormActivity;
 import com.example.homepage.R;
 import com.example.homepage.USER.User;
 import com.example.homepage.USER.UserInfoFetcher;
 import com.example.homepage.USER.UserRegister;
+import com.example.homepage.dashboard.DashboardFragment;
 import com.example.homepage.utils.ReservationManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -87,6 +89,7 @@ public class Login extends AppCompatActivity {
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     String email = String.valueOf(editTextEmail.getText());
                     String password = String.valueOf(editTextPassword.getText());
 
@@ -107,6 +110,15 @@ public class Login extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         progressBar.setVisibility(View.GONE);
                                         Toast.makeText(Login.this, "Successfully signed in!.", Toast.LENGTH_SHORT).show();
+
+                                        if(fromCheckout){
+                                            Intent intent = new Intent(getApplicationContext(), CheckoutActivity.class);
+                                            User.clear();
+                                            UserInfoFetcher.getUserInfo(email);
+                                            intent.putExtras(getIntent());
+                                            startActivity(intent);
+                                        }
+
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                         User.clear();
                                         UserInfoFetcher.getUserInfo(email);
