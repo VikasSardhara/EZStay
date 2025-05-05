@@ -9,6 +9,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="continue_as_guest">Continue as Guest</string>
     <string name="menu_cart_title">Cart</string>
+<<<<<<< HEAD
     <string name="back">Back</string>
     <string name="profile_picture">Profile picture</string>
     <string name="full_name">Full Name</string>
@@ -19,4 +20,6 @@
     <string name="cart">Cart</string>
     <string name="login">Login</string>
 
+=======
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 </resources>

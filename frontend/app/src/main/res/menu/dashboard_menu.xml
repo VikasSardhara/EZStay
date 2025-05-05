@@ -5,7 +5,13 @@
     <item
         android:id="@+id/menu_cart"
         android:icon="@drawable/ic_cart"
+<<<<<<< HEAD
         android:title="@string/cart"
         app:showAsAction="always" />
 
 </menu>
+=======
+        android:title="@string/menu_cart_title"
+        app:showAsAction="ifRoom" />
+</menu>
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

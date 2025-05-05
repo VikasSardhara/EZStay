@@ -11,6 +11,13 @@ user_id,name,email,dob,creation_date
 1012,ved starks,vedstarks@gmail.com,4/29/2025,04/29/2025
 1013,Test User,test@example.com,2000-01-01,05/01/2025
 1014,DIE DIE,DIE@gmail.com,05/01/2003,05/01/2025
+<<<<<<< HEAD
 1015,we all,try@gmail.com,05/02/2001,05/02/2025
 1016,dylan hang,dylanhang2000@gmail.com,05/04/2002,05/04/2025
 1017,test testt,test12345@gmail.com,05/04/2005,05/04/2025
+=======
+1015,we all,try@gmail.com,05/02/2001,05/02/2025
+1016,dylan hang,dylanhang2000@gmail.com,05/04/2002,05/04/2025
+1017,test testt,test12345@gmail.com,05/04/2005,05/04/2025
+1018,Dylan Hang,dylanhang2001@gmail.com,05/04/2002,05/04/2025
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

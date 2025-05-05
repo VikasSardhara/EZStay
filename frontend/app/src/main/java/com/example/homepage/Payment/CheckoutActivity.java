@@ -211,4 +211,8 @@ public class CheckoutActivity extends AppCompatActivity {
             startActivity(i);
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

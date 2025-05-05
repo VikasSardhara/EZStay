@@ -4,8 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
+<<<<<<< HEAD
     android:background="@drawable/rounded_card_background"
     android:elevation="6dp"
+=======
+    android:background="@drawable/card_bg"
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
     android:layout_marginBottom="12dp">
 
     <TextView
@@ -13,17 +17,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Reservation details"
+<<<<<<< HEAD
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
+=======
+        android:textAppearance="?android:attr/textAppearanceMedium"
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
         android:paddingBottom="8dp" />
 
     <TextView
         android:id="@+id/tvReservationPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:text="Price: King $100 and 2 Queens $140"
         android:textSize="16sp"
+=======
+        android:text="Price: king $100 and Queens $140"
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
         android:textStyle="bold"
         android:textColor="#4CAF50"
         android:paddingBottom="8dp" />
@@ -33,7 +45,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
+<<<<<<< HEAD
         android:layout_marginTop="8dp">
+=======
+        android:layout_marginTop="4dp">
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
         <Button
             android:id="@+id/btnRemove"
@@ -41,7 +57,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="REMOVE"
+<<<<<<< HEAD
             android:background="@drawable/rounded_button"
+=======
+            android:backgroundTint="@color/purple_500"
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
             android:textColor="@android:color/white"
             android:layout_marginEnd="4dp" />
 
@@ -51,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="CONFIRM"
+<<<<<<< HEAD
             android:background="@drawable/rounded_button"
             android:textColor="@android:color/white"
             android:layout_marginEnd="4dp" />
@@ -58,3 +79,20 @@
         </LinearLayout>
 
 </LinearLayout>
+=======
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btnPayment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PAYMENT"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</LinearLayout>
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

@@ -10,8 +10,11 @@ import com.example.homepage.Profile.AccountInfo;
 import com.example.homepage.dashboard.DashboardFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.MenuItem;
+<<<<<<< HEAD
 import androidx.appcompat.widget.Toolbar;
 
+=======
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
 import com.example.homepage.home.HomeFragment;
 
@@ -23,10 +26,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_home);
         Intent intent = getIntent();
+<<<<<<< HEAD
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+=======
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
         if (intent != null && intent.getBooleanExtra("go_to_dashboard", false)) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new DashboardFragment())

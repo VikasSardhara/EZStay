@@ -181,4 +181,8 @@ public class DashboardFragment extends Fragment {
 
         tvTotalPrice.setText("Total: " + currencyFormat.format(total));
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

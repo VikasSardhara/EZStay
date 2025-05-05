@@ -66,4 +66,8 @@ public class GuestFormActivity extends AppCompatActivity {
             Toast.makeText(this, "Guest form submitted. Welcome!", Toast.LENGTH_SHORT).show();
         });
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

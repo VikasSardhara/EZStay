@@ -84,6 +84,10 @@ public class CartFragment extends Fragment {
             TextView tvPrice = card.findViewById(R.id.tvReservationPrice);
             Button btnRemove = card.findViewById(R.id.btnRemove);
             Button btnConfirm = card.findViewById(R.id.btnConfirmBooking);
+<<<<<<< HEAD
+=======
+            Button btnPay = card.findViewById(R.id.btnPayment);
+>>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
             String info = "Room: " + res.getRoomType() + "\n"
                     + "Smoking: " + res.getSmokingPreference() + "\n"
