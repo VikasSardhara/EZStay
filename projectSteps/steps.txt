@@ -1,0 +1,20 @@
+Hello, here are possible steps we can take.
+
+App rundown:
+
+when customer opens app, sees hotel front page with info on Hotel,
+under a textbox or drop menu to pick date and # of people
+
+once chosen next page shows possible rooms w/ prices and checkboxes for filters
+
+after book now button, takes to payment page + Guest sign in option, should be able to input info, check if info is correct, and confirm
+
+(After)
+
+Email confirmation
+Contact Info 
+Manager Log In
+
+Should not require guest to sign in can just use confirmation code to check room status
+
+Logging in would be easier, can add rewards for customers with acc
