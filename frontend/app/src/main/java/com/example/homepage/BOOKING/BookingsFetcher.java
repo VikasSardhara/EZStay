@@ -1,6 +1,7 @@
-<<<<<<< HEAD
 package com.example.homepage.BOOKING;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.homepage.utils.ReservationManager;
@@ -14,197 +15,149 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import java.util.ArrayList;
 
 public class BookingsFetcher {
+
     public static void getBookings(int uID, boolean ifExpired, BookingsListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ArrayList<ReservationManager.Reservation> expiredBookings = new ArrayList<>();
-                ArrayList<ReservationManager.Reservation> futureBookings = new ArrayList<>();
+        new Thread(() -> {
+            ArrayList<ReservationManager.Reservation> expiredBookings = new ArrayList<>();
+            ArrayList<ReservationManager.Reservation> futureBookings = new ArrayList<>();
 
-                HttpURLConnection urlConnection = null;
-                LocalDate currentDate = LocalDate.now();
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            HttpURLConnection urlConnection = null;
+            LocalDate currentDate = LocalDate.now();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-                try {
-                    URL url = new URL("http://10.0.2.2:5000/bookings/" + uID);
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.setConnectTimeout(5000);
-                    urlConnection.setReadTimeout(5000);
+            try {
+                URL url = new URL("http://10.0.2.2:5000/bookings/" + uID);
+                Log.d("BookingsFetcher", "Requesting URL: " + url);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setConnectTimeout(5000);
+                urlConnection.setReadTimeout(5000);
 
-                    Log.d("testttt", "id" + uID);
+                Log.d("BookingsFetcher", "Fetching bookings for user ID: " + uID);
 
-                    int responseCode = urlConnection.getResponseCode();
-                    if (responseCode == 200) {
-                        InputStream is = urlConnection.getInputStream();
-                        byte[] bytes = is.readAllBytes();
-                        String jsonResponse = new String(bytes, StandardCharsets.UTF_8);
-                        JSONObject jsonObj = new JSONObject(jsonResponse);
-                        JSONArray bookingsArray = jsonObj.getJSONArray("user_bookings");
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode == 200) {
+                    InputStream is = urlConnection.getInputStream();
+                    byte[] bytes = is.readAllBytes();
+                    String jsonResponse = new String(bytes, StandardCharsets.UTF_8);
+                    JSONObject jsonObj = new JSONObject(jsonResponse);
+                    JSONArray bookingsArray = jsonObj.getJSONArray("user_bookings");
 
-                        for (int i = 0; i < bookingsArray.length(); i++) {
-                            JSONObject JSONbooking = bookingsArray.getJSONObject(i);
-                            int bookingID = JSONbooking.getInt("booking_id");
-                            int roomID = JSONbooking.getInt("room_id");
-                            String checkIN = JSONbooking.getString("check_in_date");
-                            String checkOUT = JSONbooking.getString("check_out_date");
-                            int num_guests = JSONbooking.getInt("num_guests");
+                    for (int i = 0; i < bookingsArray.length(); i++) {
+                        JSONObject JSONbooking = bookingsArray.getJSONObject(i);
+                        int bookingID = JSONbooking.getInt("booking_id");
+                        int roomID = JSONbooking.getInt("room_id");
+                        String checkIN = JSONbooking.getString("check_in_date");
+                        String checkOUT = JSONbooking.getString("check_out_date");
+                        int num_guests = JSONbooking.getInt("num_guests");
 
-                            ReservationManager.Reservation booking = new ReservationManager.Reservation(bookingID, roomID, checkIN, checkOUT, num_guests);
+                        ReservationManager.Reservation booking = new ReservationManager.Reservation(bookingID, roomID, checkIN, checkOUT, num_guests);
 
-                            LocalDate checkOutTime = LocalDate.parse(checkOUT, dateFormatter);
+                        LocalDate checkOutTime = LocalDate.parse(checkOUT, dateFormatter);
 
-                            if (currentDate.isAfter(checkOutTime)) {
-                                expiredBookings.add(booking);
-                            } else {
-                                futureBookings.add(booking);
-                            }
+                        if (currentDate.isAfter(checkOutTime)) {
+                            expiredBookings.add(booking);
+                        } else {
+                            futureBookings.add(booking);
                         }
-
-                        Log.d("futurebooking", "hi" +futureBookings.toString());
-                        Log.d("pastbooking", "hi" +expiredBookings.toString());
-
-                        ReservationManager.getCurrentReservations().clear();
-                        ReservationManager.getPastReservations().clear();
-                        ReservationManager.getCurrentReservations().addAll(futureBookings);
-                        ReservationManager.getPastReservations().addAll(expiredBookings);
-
-                        if(ifExpired) {
-                            listener.onBookingsReceived(expiredBookings);
-                        }
-                        else {
-                            listener.onBookingsReceived(futureBookings);
-                        }
-
-                        Log.d("futurebookings", "hi"+ ReservationManager.getCurrentReservations());
-
-
-                    } else {
-                        Log.e("Booking", "Failed to fetch bookings. Response code: " + responseCode);
                     }
 
-                } catch (Exception e) {
-                    Log.e("Booking", "Error fetching bookings: " + e.getMessage());
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
+                    // Update ReservationManager
+                    ReservationManager.getCurrentReservations().clear();
+                    ReservationManager.getPastReservations().clear();
+                    ReservationManager.getCurrentReservations().addAll(futureBookings);
+                    ReservationManager.getPastReservations().addAll(expiredBookings);
+
+                    // Return result on main thread
+                    ArrayList<ReservationManager.Reservation> result = ifExpired ? expiredBookings : futureBookings;
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        listener.onBookingsReceived(result);
+                    });
+
+                } else {
+                    postError(listener, "Failed to fetch bookings. Response code: " + responseCode);
+                }
+
+            } catch (Exception e) {
+                postError(listener, "Error fetching bookings: " + e.getMessage());
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
                 }
             }
         }).start();
     }
 
-    // Interface for callback
-    public interface BookingsListener {
-        void onBookingsReceived(ArrayList<ReservationManager.Reservation> bookings);
-    }
-=======
-package com.example.homepage.BOOKING;
+    public static void getBookingsAll(BookingsListener listener) {
+        new Thread(() -> {
+            ArrayList<ReservationManager.Reservation> allBookings = new ArrayList<>();
 
-import android.util.Log;
+            HttpURLConnection urlConnection = null;
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-import com.example.homepage.utils.ReservationManager;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-import java.util.ArrayList;
-
-public class BookingsFetcher {
-    public static void getBookings(int uID, boolean ifExpired, BookingsListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ArrayList<ReservationManager.Reservation> expiredBookings = new ArrayList<>();
-                ArrayList<ReservationManager.Reservation> futureBookings = new ArrayList<>();
-
-                HttpURLConnection urlConnection = null;
-                LocalDate currentDate = LocalDate.now();
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-                try {
-                    URL url = new URL("http://10.0.2.2:5000/bookings/" + uID);
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.setConnectTimeout(5000);
-                    urlConnection.setReadTimeout(5000);
-
-                    Log.d("testttt", "id" + uID);
-
-                    int responseCode = urlConnection.getResponseCode();
-                    if (responseCode == 200) {
-                        InputStream is = urlConnection.getInputStream();
-                        byte[] bytes = is.readAllBytes();
-                        String jsonResponse = new String(bytes, StandardCharsets.UTF_8);
-                        JSONObject jsonObj = new JSONObject(jsonResponse);
-                        JSONArray bookingsArray = jsonObj.getJSONArray("user_bookings");
-
-                        for (int i = 0; i < bookingsArray.length(); i++) {
-                            JSONObject JSONbooking = bookingsArray.getJSONObject(i);
-                            int bookingID = JSONbooking.getInt("booking_id");
-                            int roomID = JSONbooking.getInt("room_id");
-                            String checkIN = JSONbooking.getString("check_in_date");
-                            String checkOUT = JSONbooking.getString("check_out_date");
-                            int num_guests = JSONbooking.getInt("num_guests");
-
-                            ReservationManager.Reservation booking = new ReservationManager.Reservation(bookingID, roomID, checkIN, checkOUT, num_guests);
-
-                            LocalDate checkOutTime = LocalDate.parse(checkOUT, dateFormatter);
-
-                            if (currentDate.isAfter(checkOutTime)) {
-                                expiredBookings.add(booking);
-                            } else {
-                                futureBookings.add(booking);
-                            }
-                        }
-
-                        Log.d("futurebooking", "hi" +futureBookings.toString());
-                        Log.d("pastbooking", "hi" +expiredBookings.toString());
-
-                        ReservationManager.getCurrentReservations().clear();
-                        ReservationManager.getPastReservations().clear();
-                        ReservationManager.getCurrentReservations().addAll(futureBookings);
-                        ReservationManager.getPastReservations().addAll(expiredBookings);
-
-                        if(ifExpired) {
-                            listener.onBookingsReceived(expiredBookings);
-                        }
-                        else {
-                            listener.onBookingsReceived(futureBookings);
-                        }
-
-                        Log.d("futurebookings", "hi"+ ReservationManager.getCurrentReservations());
+            try {
+                URL url = new URL("http://10.0.2.2:5000/bookings");
+                Log.d("BookingsFetcher", "Requesting URL: " + url);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setConnectTimeout(5000);
+                urlConnection.setReadTimeout(5000);
 
 
-                    } else {
-                        Log.e("Booking", "Failed to fetch bookings. Response code: " + responseCode);
+                Log.d("BookingsFetcher", "Requesting URL: " + url.toString());
+
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode == 200) {
+                    InputStream is = urlConnection.getInputStream();
+                    byte[] bytes = is.readAllBytes();
+                    String jsonResponse = new String(bytes, StandardCharsets.UTF_8);
+                    JSONObject jsonObj = new JSONObject(jsonResponse);
+                    JSONArray bookingsArray = jsonObj.getJSONArray("bookings");
+
+                    for (int i = 0; i < bookingsArray.length(); i++) {
+                        JSONObject JSONbooking = bookingsArray.getJSONObject(i);
+                        int bookingID = JSONbooking.getInt("booking_id");
+                        int roomID = JSONbooking.getInt("room_id");
+                        String checkIN = JSONbooking.getString("check_in_date");
+                        String checkOUT = JSONbooking.getString("check_out_date");
+                        int num_guests = JSONbooking.getInt("num_guests");
+
+                        ReservationManager.Reservation booking = new ReservationManager.Reservation(bookingID, roomID, checkIN, checkOUT, num_guests);
+
+                        allBookings.add(booking);
                     }
 
-                } catch (Exception e) {
-                    Log.e("Booking", "Error fetching bookings: " + e.getMessage());
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        listener.onBookingsReceived(allBookings);
+                    });
+
+                } else {
+                    postError(listener, "Failed to fetch bookings. Response code: " + responseCode);
+                }
+
+            } catch (Exception e) {
+                postError(listener, "Error fetching bookings: " + e.getMessage());
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
                 }
             }
         }).start();
     }
 
-    // Interface for callback
+    private static void postError(BookingsListener listener, String message) {
+        if (listener != null) {
+            new Handler(Looper.getMainLooper()).post(() -> listener.onError(message));
+        }
+    }
+
+
     public interface BookingsListener {
         void onBookingsReceived(ArrayList<ReservationManager.Reservation> bookings);
+
+        void onError(String message);
     }
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 }

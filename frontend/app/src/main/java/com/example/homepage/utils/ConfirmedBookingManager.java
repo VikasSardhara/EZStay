@@ -1,6 +1,7 @@
 package com.example.homepage.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ConfirmedBookingManager {
@@ -15,7 +16,37 @@ public class ConfirmedBookingManager {
         public BookingCart.Reservation getReservation() {
             return reservation;
         }
+
+        // These methods will delegate to the Reservation object (from BookingCart)
+        public Date getCheckInDate() {
+            return reservation.getCheckInDate();
+        }
+
+        public Date getCheckOutDate() {
+            return reservation.getCheckOutDate();
+        }
+
+        public String getRoomType() {
+            return reservation.getRoomType();
+        }
+
+        public String getSmokingPreference() {
+            return reservation.getSmokingPreference();
+        }
+
+        public int getRoomId() {
+            return reservation.getRoomId();
+        }
+
+        public double getPrice() {
+            return reservation.getPrice();
+        }
+
+        public int getGuestCount() {
+            return reservation.getGuestCount();
+        }
     }
+
 
     private static final List<ConfirmedReservation> confirmedBookings = new ArrayList<>();
 
@@ -31,9 +62,7 @@ public class ConfirmedBookingManager {
 
     // Used by "Remove" button in Dashboard to cancel a confirmed booking
     public static void removeConfirmedReservation(BookingCart.Reservation reservation) {
-        confirmedBookings.removeIf(item ->
-                item.getReservation().equals(reservation)
-        );
+        confirmedBookings.removeIf(item -> item.getReservation().equals(reservation));
     }
 
     // Optional: For testing/debug

@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 import stripe
 import json
 
-
 app = Flask(__name__)
 stripe.api_key = 'sk_test_51R65YnFQK7HmrpDOZ8MhB8waSHJG8dnhtt4oJGfiaFbhRW79rQ3dyz42r6GQkvd54jxQyl0en2pq13btXYQxuX0B008fDthRBe'
 
@@ -19,9 +18,12 @@ def payment_sheet():
         email = data.get('email')
         reservations = data.get('reservations', [])
 
+        # Convert reservations into a JSON string
+        reservations_json = json.dumps(reservations)
+
         # Create customer
         customer = stripe.Customer.create(
-            email= email,
+            email=email,
             name=f"{first_name} {last_name}",
         )
 
@@ -32,14 +34,14 @@ def payment_sheet():
         )
 
         paymentIntent = stripe.PaymentIntent.create(
-            amount=amount * 10,
+            amount=amount,
             metadata={
                 "amount": str(amount),
                 "first_name": first_name,
                 "last_name": last_name,
                 "email": email,
-                "reservations": json.dumps(reservations)
-                },
+                "reservations": reservations_json  # Pass the JSON string here
+            },
             currency='usd',
             customer=customer['id'],
             automatic_payment_methods={'enabled': True},

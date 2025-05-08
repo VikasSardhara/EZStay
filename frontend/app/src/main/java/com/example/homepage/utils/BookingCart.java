@@ -51,7 +51,9 @@ public class BookingCart {
             return price;
         }
 
-        public int getRoomId(){return roomId;}
+        public int getRoomId() {
+            return roomId;
+        }
 
         private double calculatePrice() {
             int nights = getNumberOfNights();

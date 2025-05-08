@@ -1,55 +1,27 @@
-<<<<<<< HEAD
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-=======
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-<<<<<<< HEAD
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/rounded_nav_background"
-        android:elevation="4dp"
-        app:titleTextColor="@android:color/white"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-=======
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-<<<<<<< HEAD
-        android:layout_weight="1" />
-=======
         android:layout_weight="1"/>
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
-        android:background="@drawable/rounded_nav_background"
-        app:menu="@menu/bottom_nav_menu" />
-
-</LinearLayout>
-=======
         android:background="?android:attr/windowBackground"
         app:menu="@menu/bottom_nav_menu"/>
 </LinearLayout>
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

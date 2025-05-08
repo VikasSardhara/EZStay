@@ -1,61 +1,58 @@
 package com.example.homepage.Payment;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.example.homepage.USER.DOBPicker;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.homepage.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
+
 public class GuestFormActivity extends AppCompatActivity {
 
     private EditText etFirstName, etLastName, etEmail, etBirthDate;
     private Button btnSubmit;
+    private Calendar selectedDOB;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest_form);
 
-        etFirstName = findViewById(R.id.first_name);
-        etLastName = findViewById(R.id.last_name);
-        etEmail = findViewById(R.id.register_email);
-        etBirthDate = findViewById(R.id.dob_input);
-        btnSubmit = findViewById(R.id.next_button);
+        etFirstName = findViewById(R.id.firstName);
+        etLastName = findViewById(R.id.lastName);
+        etEmail = findViewById(R.id.email);
+        etBirthDate = findViewById(R.id.birthDate);
+        btnSubmit = findViewById(R.id.submitGuestForm);
 
-        etBirthDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DOBPicker.showDatePicker(GuestFormActivity.this, new DOBPicker.DOBSelectedCallback() {
-                    @Override
-                    public void onValidDOBSelected(String formattedDate) {
-                        etBirthDate.setText(formattedDate);
-                    }
-                });
-            }
-        });
+        selectedDOB = Calendar.getInstance();
 
-        // Handle form submission
+        etBirthDate.setOnClickListener(v -> showDatePickerDialog());
+
         btnSubmit.setOnClickListener(v -> {
             String firstName = etFirstName.getText().toString().trim();
             String lastName = etLastName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String birthDate = etBirthDate.getText().toString().trim();
 
-            // Check if all fields are filled
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || birthDate.isEmpty()) {
                 Toast.makeText(this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Passing the guest form data to the next activity (CheckoutActivity)
+            if (!is18OrOlder(selectedDOB)) {
+                Toast.makeText(this, "You must be at least 18 years old to book.", Toast.LENGTH_LONG).show();
+                return;
+            }
             Intent i = new Intent(getApplicationContext(), CheckoutActivity.class);
             i.putExtra("first_name", firstName);
             i.putExtra("last_name", lastName);
@@ -64,10 +61,26 @@ public class GuestFormActivity extends AppCompatActivity {
             finish();
 
             Toast.makeText(this, "Guest form submitted. Welcome!", Toast.LENGTH_SHORT).show();
+            // You can now navigate to the Home screen or store this guest data for further use.
         });
     }
-<<<<<<< HEAD
+
+    private void showDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+
+        new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            selectedDOB.set(year, month, dayOfMonth);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+            etBirthDate.setText(sdf.format(selectedDOB.getTime()));
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private boolean is18OrOlder(Calendar dob) {
+        Calendar today = Calendar.getInstance();
+        Calendar legalAge = (Calendar) dob.clone();
+        legalAge.add(Calendar.YEAR, 18);
+        return !today.before(legalAge); // returns true if today is after or equal to 18th birthday
+    }
+
+
 }
-=======
-}
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

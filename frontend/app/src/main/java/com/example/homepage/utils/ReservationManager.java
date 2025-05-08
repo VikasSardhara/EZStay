@@ -22,6 +22,8 @@ public class ReservationManager {
             this.smokingPreference = smokingPreference;
             this.guestCount = guestCount;
             this.bookingID = bookingId;
+            this.checkIN = checkIN;
+            this.checkOUT = checkOUT;
 
         }
 
@@ -35,13 +37,7 @@ public class ReservationManager {
         }
 
         public String toString() {
-            return "Reservation{" +
-                    "bookingID=" + bookingID +
-                    ", roomID=" + roomID +
-                    ", checkIN='" + checkIN + '\'' +
-                    ", checkOUT='" + checkOUT + '\'' +
-                    ", guestCount=" + guestCount +
-                    '}';
+            return "Reservation{" + "bookingID=" + bookingID + ", roomID=" + roomID + ", checkIN='" + checkIN + '\'' + ", checkOUT='" + checkOUT + '\'' + ", guestCount=" + guestCount + '}';
         }
 
     }

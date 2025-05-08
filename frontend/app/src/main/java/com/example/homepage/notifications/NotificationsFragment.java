@@ -24,8 +24,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
         LinearLayout previousReservationsContainer = view.findViewById(R.id.previousReservationsContainer);
 
@@ -39,13 +38,7 @@ public class NotificationsFragment extends Fragment {
         } else {
             for (ConfirmedBookingManager.ConfirmedReservation res : confirmed) {
                 TextView reservation = new TextView(getContext());
-                reservation.setText(
-                        "Room: " + res.getReservation().getRoomType() + "\n"
-                                + "Smoking: " + res.getReservation().getSmokingPreference() + "\n"
-                                + "Guests: " + res.getReservation().getGuestCount() + "\n"
-                                + "Check-in: " + sdf.format(res.getReservation().getCheckInDate()) + "\n"
-                                + "Check-out: " + sdf.format(res.getReservation().getCheckOutDate())
-                );
+                reservation.setText("Room: " + res.getReservation().getRoomType() + "\n" + "Smoking: " + res.getReservation().getSmokingPreference() + "\n" + "Guests: " + res.getReservation().getGuestCount() + "\n" + "Check-in: " + sdf.format(res.getReservation().getCheckInDate()) + "\n" + "Check-out: " + sdf.format(res.getReservation().getCheckOutDate()));
                 reservation.setPadding(0, 0, 0, 24);
                 previousReservationsContainer.addView(reservation);
             }

@@ -1,143 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-=======
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-<<<<<<< HEAD
-    android:layout_height="match_parent">
-
-    <!-- Background image -->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/onemore"
-        android:contentDescription="@null" />
-
-    <!-- Dark overlay -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000" />
-
-    <!-- Back button -->
-    <ImageButton
-        android:id="@+id/back_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_media_previous"
-        android:contentDescription="@string/back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Profile image circular -->
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="106dp"
-        android:layout_height="106dp"
-        android:src="@drawable/account_background"
-        android:background="@drawable/circle_background"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/profile_picture"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
-
-    <!-- Full name -->
-    <TextView
-        android:id="@+id/full_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/full_name"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:shadowColor="#000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        app:layout_constraintTop_toBottomOf="@id/imageView3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
-
-    <!-- Reservations -->
-    <LinearLayout
-        android:id="@+id/lin_layout_reservations"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/rounded_card_background"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal"
-        android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/full_name">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/reservations"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=">"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <!-- History -->
-    <LinearLayout
-        android:id="@+id/lin_layout_history"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_card_background"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal"
-        android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lin_layout_reservations">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/history"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=">"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <!-- Not logged in message -->
-=======
     android:layout_height="match_parent"
     tools:context=".Profile.AccountInfo">
 
@@ -151,59 +17,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
     <TextView
         android:id="@+id/not_logged_in_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
-        android:text="@string/not_logged_in"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-=======
         android:text="You are not logged in."
         android:textSize="18sp"
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<<<<<<< HEAD
-    <!-- Logout button -->
-=======
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
     <Button
         android:id="@+id/logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
-        android:text="@string/logout"
-        android:background="@drawable/rounded_gradient_button"
-        android:textColor="@android:color/white"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="24dp" />
-
-    <!-- Login button -->
-    <Button
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/login"
-        android:background="@drawable/rounded_gradient_button"
-        android:textColor="@android:color/white"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="24dp" />
-
-    <!-- Constraint Groups -->
-=======
         android:visibility="invisible"
         android:text="Logout"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -227,24 +56,16 @@
         app:layout_constraintVertical_bias="0.913" />
 
 
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
     <androidx.constraintlayout.widget.Group
         android:id="@+id/account_info_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
-        app:constraint_referenced_ids="lin_layout_history,lin_layout_reservations,logout_button,imageView3" />
-=======
         app:constraint_referenced_ids="lin_layout_history,lin_layout_reservations,logout_button, imageView3" />
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/guest_info_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
-        app:constraint_referenced_ids="not_logged_in_message,login_button" />
-=======
         app:constraint_referenced_ids="not_logged_in_message, login_button" />
 
 
@@ -252,26 +73,27 @@
         android:id="@+id/imageView3"
         android:layout_width="106dp"
         android:layout_height="100dp"
-        android:src="@android:drawable/sym_def_app_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.047" />
-
+        app:layout_constraintVertical_bias="0.086"
+        android:src="@android:drawable/sym_def_app_icon"
+        />
 
     <TextView
         android:id="@+id/full_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="17dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.025" />
+        app:layout_constraintVertical_bias="0.051"
+        />
+
 
     <LinearLayout
         android:id="@+id/lin_layout_reservations"
@@ -341,16 +163,5 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lin_layout_reservations"
-        app:layout_constraintVertical_bias="0.0" />
 
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 </androidx.constraintlayout.widget.ConstraintLayout>

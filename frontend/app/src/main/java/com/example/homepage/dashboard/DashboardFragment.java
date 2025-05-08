@@ -1,9 +1,9 @@
 /**
  * DashboardFragment.java
- *
+ * <p>
  * Displays the user's confirmed bookings.
  * Users can view reservation details, remove a confirmed booking, or proceed to payment.
- *
+ * <p>
  * Author: EZStay Team
  * Date: April 2025
  */
@@ -47,11 +47,13 @@ public class DashboardFragment extends Fragment {
     private LinearLayout currentReservationsContainer;
     private Button btnPayFromCurrent;
     private TextView tvTotalPrice;
+    Button btnBackToCart;
 
     /**
      * Default constructor for DashboardFragment.
      */
-    public DashboardFragment() {}
+    public DashboardFragment() {
+    }
 
     /**
      * Enables the cart menu.
@@ -66,8 +68,7 @@ public class DashboardFragment extends Fragment {
      * Inflates the layout and sets up listeners.
      */
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         currentReservationsContainer = view.findViewById(R.id.currentReservationsContainer);
         btnPayFromCurrent = view.findViewById(R.id.btnPayFromCurrent);
@@ -76,18 +77,39 @@ public class DashboardFragment extends Fragment {
         displayCurrentReservations();
 
         btnPayFromCurrent.setOnClickListener(v -> {
+            FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+            Intent intent;
             double total = 0;
             for (ConfirmedBookingManager.ConfirmedReservation res : ConfirmedBookingManager.getConfirmedBookings()) {
                 total += res.getReservation().getPrice();
             }
-            if (total > 0) {
-                Intent i = new Intent(getActivity(), CheckoutActivity.class);
-                i.putExtra("amount", (int)(total * 100)); // Stripe expects cents
-                startActivity(i);
-            } else {
+
+            if (total == 0) {
                 Toast.makeText(getContext(), "No confirmed bookings to pay for.", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            if (mUser != null) {
+                intent = new Intent(requireContext(), CheckoutActivity.class);
+                intent.putExtra("amount", (int) total * 100);
+            } else {
+                intent = new Intent(requireContext(), Login.class);
+                intent.putExtra("from_checkout", true);
+            }
+
+            startActivity(intent);
+
         });
+
+        btnBackToCart = view.findViewById(R.id.btnBackToCart);
+
+        btnBackToCart.setOnClickListener(v -> {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new CartFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+
 
         return view;
     }
@@ -137,38 +159,18 @@ public class DashboardFragment extends Fragment {
         double total = 0;
 
         for (ConfirmedBookingManager.ConfirmedReservation res : confirmed) {
-            View card = LayoutInflater.from(getContext())
-                    .inflate(R.layout.item_dashboard_reservation, currentReservationsContainer, false);
+            View card = LayoutInflater.from(getContext()).inflate(R.layout.item_dashboard_reservation, currentReservationsContainer, false);
 
             TextView tvDetails = card.findViewById(R.id.tvReservationDetails);
             TextView tvPrice = card.findViewById(R.id.tvReservationPrice);
-            Button btnPay = card.findViewById(R.id.btnPaymentConfirmed);
             Button btnRemove = card.findViewById(R.id.btnRemoveConfirmed);
 
-            String info = "Room: " + res.getReservation().getRoomType() + "\n"
-                    + "Smoking: " + res.getReservation().getSmokingPreference() + "\n"
-                    + "Guests: " + res.getReservation().getGuestCount() + "\n"
-                    + "Check-in: " + sdf.format(res.getReservation().getCheckInDate()) + "\n"
-                    + "Check-out: " + sdf.format(res.getReservation().getCheckOutDate());
+            String info = "Room: " + res.getReservation().getRoomType() + "\n" + "Smoking: " + res.getReservation().getSmokingPreference() + "\n" + "Guests: " + res.getReservation().getGuestCount() + "\n" + "Check-in: " + sdf.format(res.getReservation().getCheckInDate()) + "\n" + "Check-out: " + sdf.format(res.getReservation().getCheckOutDate());
 
             tvDetails.setText(info);
             tvPrice.setText("Price: " + currencyFormat.format(res.getReservation().getPrice()));
 
             total += res.getReservation().getPrice();
-
-            btnPay.setOnClickListener(v -> {
-                FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-                Intent intent;
-
-                if (mUser != null) {
-                    intent = new Intent(requireContext(), CheckoutActivity.class);
-                } else {
-                    intent = new Intent(requireContext(), Login.class);
-                    intent.putExtra("from_checkout", true);
-
-                }
-                startActivity(intent);
-            });
 
             btnRemove.setOnClickListener(v -> {
                 ConfirmedBookingManager.removeReservation(res.getReservation());
@@ -181,8 +183,4 @@ public class DashboardFragment extends Fragment {
 
         tvTotalPrice.setText("Total: " + currencyFormat.format(total));
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

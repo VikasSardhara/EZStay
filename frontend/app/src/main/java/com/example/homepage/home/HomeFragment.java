@@ -1,8 +1,11 @@
+// Updated HomeFragment.java with fixes to prevent crash after "Book Now"
+
 package com.example.homepage.home;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,58 +20,62 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.homepage.BOOKING.BookingsFetcher;
 import com.example.homepage.R;
 import com.example.homepage.cart.CartFragment;
 import com.example.homepage.utils.BookingCart;
+import com.example.homepage.utils.ReservationManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class HomeFragment extends Fragment {
 
-    private Calendar checkInCalendar = null;
-    private Calendar checkOutCalendar = null;
+    private Calendar checkInCalendar;
+    private Calendar checkOutCalendar;
+    private int guestCount = 1;
 
     private TextView tvCheckInDate, tvCheckOutDate, tvGuestCount;
-    private Button btnDecreaseGuests, btnIncreaseGuests, btnBookNow;
     private RadioButton rbSmoking, rbKing;
     private RadioGroup rgRoomType;
 
-    private int guestCount = 1;
-
-    public HomeFragment() {}
+    public HomeFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Button btnCheckInDate = view.findViewById(R.id.btnCheckInDate);
-        Button btnCheckOutDate = view.findViewById(R.id.btnCheckOutDate);
+        initViews(view);
+        initDateDefaults();
+        setListeners();
+
+        return view;
+    }
+
+    private void initViews(View view) {
         tvCheckInDate = view.findViewById(R.id.tvCheckInDate);
         tvCheckOutDate = view.findViewById(R.id.tvCheckOutDate);
         tvGuestCount = view.findViewById(R.id.tvGuestCount);
-        btnDecreaseGuests = view.findViewById(R.id.btnDecreaseGuests);
-        btnIncreaseGuests = view.findViewById(R.id.btnIncreaseGuests);
-        Button btnBookNow = view.findViewById(R.id.btnBookNow);
         rbSmoking = view.findViewById(R.id.rbSmoking);
         rbKing = view.findViewById(R.id.rbKing);
         rgRoomType = view.findViewById(R.id.rgRoomType);
 
-        tvGuestCount.setText(String.valueOf(guestCount));
-
-        // Set default check-in and check-out dates
-        checkInCalendar = Calendar.getInstance();
-        checkOutCalendar = Calendar.getInstance();
-        checkOutCalendar.add(Calendar.DAY_OF_MONTH, 1);
-        updateDateText();
+        Button btnCheckInDate = view.findViewById(R.id.btnCheckInDate);
+        Button btnCheckOutDate = view.findViewById(R.id.btnCheckOutDate);
+        Button btnDecreaseGuests = view.findViewById(R.id.btnDecreaseGuests);
+        Button btnIncreaseGuests = view.findViewById(R.id.btnIncreaseGuests);
+        Button btnBookNow = view.findViewById(R.id.btnBookNow);
 
         btnCheckInDate.setOnClickListener(v -> showDatePickerDialog(true));
         btnCheckOutDate.setOnClickListener(v -> showDatePickerDialog(false));
@@ -88,140 +95,159 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        btnBookNow.setOnClickListener(v -> {
+        btnBookNow.setOnClickListener(v -> handleBookNow());
+    }
 
-            if (checkInCalendar == null || checkOutCalendar == null) {
-                Toast.makeText(getContext(), "Please select check-in and check-out dates.", Toast.LENGTH_SHORT).show();
-                return;
+    private void initDateDefaults() {
+        checkInCalendar = Calendar.getInstance();
+        checkOutCalendar = Calendar.getInstance();
+        checkOutCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        updateDateText();
+    }
+
+    private void setListeners() {
+        tvGuestCount.setText(String.valueOf(guestCount));
+    }
+
+    private void handleBookNow() {
+        if (checkInCalendar == null || checkOutCalendar == null) {
+            showToast("Please select check-in and check-out dates.");
+            return;
+        }
+
+        if (checkOutCalendar.before(checkInCalendar)) {
+            showToast("Check-out must be after check-in.");
+            return;
+        }
+
+        long days = TimeUnit.MILLISECONDS.toDays(checkOutCalendar.getTimeInMillis() - checkInCalendar.getTimeInMillis());
+        if (days > 30) {
+            showToast("Booking cannot exceed 30 days.");
+            return;
+        }
+
+        if (rgRoomType.getCheckedRadioButtonId() == -1) {
+            showToast("Please select a room type.");
+            return;
+        }
+
+        if (guestCount > 2 && rbKing.isChecked()) {
+            showToast("King room allows max 2 guests.");
+            return;
+        }
+
+        String roomType = rbKing.isChecked() ? "King" : "Queen";
+        String smokingPref = rbSmoking.isChecked() ? "Smoking" : "Non-Smoking";
+
+        BookingsFetcher.getBookingsAll(new BookingsFetcher.BookingsListener() {
+            @Override
+            public void onBookingsReceived(ArrayList<ReservationManager.Reservation> bookings) {
+                fetchAndLockAvailableRoom(bookings, roomType, smokingPref);
             }
 
-            if (checkOutCalendar.before(checkInCalendar)) {
-                Toast.makeText(getContext(), "Check-out must be after check-in.", Toast.LENGTH_SHORT).show();
-                return;
+            @Override
+            public void onError(String message) {
+                showToast("Failed to load bookings: " + message);
             }
-
-            long diff = checkOutCalendar.getTimeInMillis() - checkInCalendar.getTimeInMillis();
-            long days = TimeUnit.MILLISECONDS.toDays(diff);
-            if (days > 30) {
-                Toast.makeText(getContext(), "Booking cannot exceed 30 days.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (rgRoomType.getCheckedRadioButtonId() == -1) {
-                Toast.makeText(getContext(), "Please select a room type.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (guestCount > 2 && rbKing.isChecked()) {
-                Toast.makeText(getContext(), "King room allows max 2 guests.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            String roomType = rbKing.isChecked() ? "King" : "Queen";
-            String smokingPref = rbSmoking.isChecked() ? "Smoking" : "Non-Smoking";
-
-            String url = "http://10.0.2.2:5000/rooms?size=" + roomType + "&type=" + smokingPref + "&guests=" + guestCount;
-
-            RequestQueue queue = Volley.newRequestQueue(requireContext());
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                    response -> {
-                        try {
-                            JSONArray rooms = response.getJSONArray("rooms");
-                            if (rooms.length() > 0) {
-                                JSONObject firstRoom = rooms.getJSONObject(0);
-                                int roomId = firstRoom.getInt("room_id");
-
-                                // Lock the room on backend
-                                String lockUrl = "http://10.0.2.2:5000/lock";
-                                JSONObject body = new JSONObject();
-                                body.put("room_id", roomId);
-                                body.put("check_in", formatDate(checkInCalendar));
-                                body.put("check_out", formatDate(checkOutCalendar));
-
-                                JsonObjectRequest lockRequest = new JsonObjectRequest(Request.Method.POST, lockUrl, body,
-                                        lockResponse -> {
-                                            // After successful lock, proceed to add to cart
-                                            BookingCart.Reservation booking = new BookingCart.Reservation(
-                                                    checkInCalendar.getTime(),
-                                                    checkOutCalendar.getTime(),
-                                                    roomType,
-                                                    smokingPref,
-                                                    guestCount,
-                                                    roomId
-                                            );
-
-                                            BookingCart.addItem(booking);
-                                            Log.d("Cart", "Cart items: " + BookingCart.getItems().size());
-                                            Toast.makeText(getContext(), "Room locked and added to cart.", Toast.LENGTH_SHORT).show();
-
-                                            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                                            transaction.replace(R.id.fragment_container, new CartFragment());
-                                            transaction.addToBackStack(null);
-                                            transaction.commit();
-                                        },
-                                        lockError -> Toast.makeText(getContext(), "Room lock failed.", Toast.LENGTH_SHORT).show()
-                                );
-                                queue.add(lockRequest);
-
-                            } else {
-                                Toast.makeText(getContext(), "No rooms available.", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Error parsing response.", Toast.LENGTH_SHORT).show();
-                        }
-                    },
-                    error -> Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show());
-
-            queue.add(request);
         });
+    }
 
-        return view;
+    private void fetchAndLockAvailableRoom(ArrayList<ReservationManager.Reservation> bookings, String roomType, String smokingPref) {
+        String url = "http://10.0.2.2:5000/rooms?size=" + roomType + "&type=" + smokingPref + "&guests=" + guestCount + "&check_in=" + formatDate(checkInCalendar) + "&check_out=" + formatDate(checkOutCalendar);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+            try {
+                JSONArray rooms = response.getJSONArray("rooms");
+                int availableRoomId = getAvailableRoomId(rooms, bookings);
+
+                if (availableRoomId != -1) {
+                    lockRoom(availableRoomId);
+                    BookingCart.addItem(new BookingCart.Reservation(checkInCalendar.getTime(), checkOutCalendar.getTime(), roomType, smokingPref, guestCount, availableRoomId));
+
+                    showToast("Room locked and added to cart.");
+                    new Handler(Looper.getMainLooper()).postDelayed(this::navigateToCart, 500);
+                } else {
+                    showToast("No available rooms for selected dates.");
+                }
+            } catch (JSONException e) {
+                showToast("Error parsing response.");
+            }
+        }, error -> showToast("Error: " + error.getMessage()));
+
+        Volley.newRequestQueue(requireContext()).add(request);
+    }
+
+    private int getAvailableRoomId(JSONArray rooms, ArrayList<ReservationManager.Reservation> bookings) throws JSONException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate selectedCheckIn = checkInCalendar.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate selectedCheckOut = checkOutCalendar.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        for (int i = 0; i < rooms.length(); i++) {
+            JSONObject room = rooms.getJSONObject(i);
+            int roomId = room.getInt("room_id");
+
+            boolean isAvailable = bookings.stream().noneMatch(res -> res.roomID == roomId && !(selectedCheckOut.isBefore(LocalDate.parse(res.checkIN, formatter)) || selectedCheckIn.isAfter(LocalDate.parse(res.checkOUT, formatter))));
+
+            if (isAvailable) return roomId;
+        }
+        return -1;
+    }
+
+    private void lockRoom(int roomId) {
+        String url = "http://10.0.2.2:5000/lock";
+        JSONObject body = new JSONObject();
+        try {
+            body.put("room_id", roomId);
+            body.put("check_in", formatDate(checkInCalendar));
+            body.put("check_out", formatDate(checkOutCalendar));
+        } catch (JSONException e) {
+            Log.e("LockRoom", "Invalid JSON", e);
+            return;
+        }
+
+        JsonObjectRequest lockRequest = new JsonObjectRequest(Request.Method.POST, url, body, response -> Log.d("Lock", "Room locked successfully"), error -> Log.e("Lock", "Failed to lock room: " + error.getMessage()));
+
+        Volley.newRequestQueue(requireContext()).add(lockRequest);
     }
 
     private void showDatePickerDialog(boolean isCheckIn) {
         final Calendar calendar = Calendar.getInstance();
+        DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view, year, month, day) -> {
+            calendar.set(year, month, day);
+            if (isCheckIn) checkInCalendar = calendar;
+            else checkOutCalendar = calendar;
+            updateDateText();
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
-        DatePickerDialog dialog = new DatePickerDialog(
-                getContext(),
-                (view, year, month, day) -> {
-                    calendar.set(year, month, day);
-
-                    if (isCheckIn) {
-                        checkInCalendar = calendar;
-                    } else {
-                        checkOutCalendar = calendar;
-                    }
-
-                    updateDateText();
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
-
-        if (isCheckIn) {
-            dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        } else if (checkInCalendar != null) {
-            dialog.getDatePicker().setMinDate(checkInCalendar.getTimeInMillis() + TimeUnit.DAYS.toMillis(1));
-        }
-
+        dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         dialog.show();
     }
 
     private void updateDateText() {
-        if (checkInCalendar != null) {
-            Date checkIn = checkInCalendar.getTime();
-            tvCheckInDate.setText("Check-in: " + android.text.format.DateFormat.format("MM/dd/yyyy", checkIn));
-        }
-        if (checkOutCalendar != null) {
-            Date checkOut = checkOutCalendar.getTime();
-            tvCheckOutDate.setText("Check-out: " + android.text.format.DateFormat.format("MM/dd/yyyy", checkOut));
-        }
+        tvCheckInDate.setText("Check-in: " + formatDateDisplay(checkInCalendar));
+        tvCheckOutDate.setText("Check-out: " + formatDateDisplay(checkOutCalendar));
     }
 
     private String formatDate(Calendar cal) {
         return android.text.format.DateFormat.format("yyyy-MM-dd", cal).toString();
+    }
+
+    private String formatDateDisplay(Calendar cal) {
+        return android.text.format.DateFormat.format("MM/dd/yyyy", cal).toString();
+    }
+
+    private void showToast(String msg) {
+        if (isAdded()) {
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void navigateToCart() {
+        if (getActivity() != null && isAdded()) {
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new CartFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 }

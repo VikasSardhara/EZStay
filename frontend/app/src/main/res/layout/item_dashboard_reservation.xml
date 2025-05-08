@@ -4,25 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-<<<<<<< HEAD
-    card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="8dp"
-    android:background="@drawable/rounded_card_background"
-
-    >
-=======
     card_view:cardCornerRadius="8dp"
     card_view:cardElevation="4dp">
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-<<<<<<< HEAD
-        android:background="@drawable/rounded_card_background"
-=======
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
         android:padding="16dp">
 
         <!-- Reservation Details -->
@@ -32,12 +20,7 @@
             android:layout_height="wrap_content"
             android:text="Reservation details go here"
             android:textColor="@android:color/black"
-<<<<<<< HEAD
-            android:textSize="16sp"
-            android:textStyle="bold"
-=======
             android:textSize="14sp"
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
             android:layout_marginBottom="8dp" />
 
         <!-- Price -->
@@ -47,24 +30,10 @@
             android:layout_height="wrap_content"
             android:text="Price: $0"
             android:textColor="#4CAF50"
-<<<<<<< HEAD
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Divider -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#CCCCCC"
-            android:layout_marginBottom="12dp" />
-
-=======
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="12dp" />
 
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
         <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,31 +47,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="REMOVE"
-<<<<<<< HEAD
-                android:background="@drawable/rounded_red_button"
-=======
                 android:backgroundTint="@android:color/holo_red_dark"
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
                 android:textColor="@android:color/white"
                 android:layout_marginEnd="4dp" />
 
-            <Button
-                android:id="@+id/btnPaymentConfirmed"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="PAYMENT"
-<<<<<<< HEAD
-                android:background="@drawable/rounded_purple_button"
-=======
-                android:backgroundTint="@color/purple_500"
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
-                android:textColor="@android:color/white"
-                android:layout_marginStart="4dp" />
         </LinearLayout>
     </LinearLayout>
-<<<<<<< HEAD
 </androidx.cardview.widget.CardView>
-=======
-</androidx.cardview.widget.CardView>
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

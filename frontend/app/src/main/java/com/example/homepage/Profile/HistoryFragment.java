@@ -13,16 +13,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.homepage.BOOKING.BookingsFetcher;
 import com.example.homepage.R;
-import com.example.homepage.ROOM.RoomSearch;
 import com.example.homepage.ROOM.Room;
+import com.example.homepage.ROOM.RoomSearch;
 import com.example.homepage.USER.User;
 import com.example.homepage.utils.ReservationManager;
 
-import java.util.ArrayList;
-
 public class HistoryFragment extends Fragment {
+
 
     Button backBtn;
     User user;
@@ -44,75 +42,70 @@ public class HistoryFragment extends Fragment {
         });
 
         user = User.getInstance();
-        Log.d("userid", "hi" + user.getUserID());
+        int userId = user.getUserID();
 
-        // Clear previous reservations and fetch new ones
-        ReservationManager.getPastReservations().clear();
-        BookingsFetcher.getBookings(user.getUserID(), true, new BookingsFetcher.BookingsListener() {
-            @Override
-            public void onBookingsReceived(ArrayList<ReservationManager.Reservation> bookings) {
-                if (bookings.isEmpty()) {
-                    Log.d("HistoryFragment", "No past reservations to display.");
-                    TextView noData = new TextView(getContext());
-                    noData.setText("No past reservations.");
-                    previousReservationsContainer.addView(noData);
-                } else {
-                    Log.d("PastFragment", "Displaying " + bookings.size() + " past reservations.");
-                    for (ReservationManager.Reservation res : bookings) {
-                        Log.d("PastFragment", "Fetching room info for room ID: " + res.roomID);
-                        RoomSearch.getRoomById(res.roomID, new RoomSearch.RoomSearchCallback() {
+
+        LinearLayout reservationLayout = new LinearLayout(getContext());
+        reservationLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        if (ReservationManager.getCurrentReservations().isEmpty()) {
+            Log.d("HistoryFragment", "No current reservations to display.");
+            TextView noData = new TextView(getContext());
+            noData.setText("No past reservations.");
+            previousReservationsContainer.addView(noData);
+        } else {
+            Log.d("HistoryFragment", "Displaying " + ReservationManager.getCurrentReservations().size() + " current reservations.");
+            for (ReservationManager.Reservation res : ReservationManager.getPastReservations()) {
+                Log.d("HistoryFragment", "Fetching room info for room ID: " + res.roomID);
+                RoomSearch.getRoomById(res.roomID, new RoomSearch.RoomSearchCallback() {
+                    @Override
+                    public void onRoomFound(Room room) {
+                        if (room == null) {
+                            Log.e("ROOMFOUND", "Room not found for room ID: " + res.roomID);
+                            return;
+                        }
+                        Log.d("ROOMFOUND", "Room found: " + room.getType() + ", Size: " + room.getSize());
+                        requireActivity().runOnUiThread(new Runnable() {
                             @Override
-                            public void onRoomFound(Room room) {
-                                if (room == null) {
-                                    Log.e("ROOMFOUND", "Room not found for room ID: " + res.roomID);
-                                    return;
+                            public void run() {
+                                TextView bookingText = new TextView(getContext());
+                                LinearLayout reservationLayout = new LinearLayout(getContext());
+                                reservationLayout.setOrientation(LinearLayout.HORIZONTAL);
+                                ImageView roomImage = new ImageView(getContext());
+
+                                if (room.getSize().equals("King")) {
+                                    roomImage.setImageResource(R.drawable.king_room);
+                                } else {
+                                    roomImage.setImageResource(R.drawable.queen_room);
                                 }
-                                Log.d("ROOMFOUND", "Room found: " + room.getType() + ", Size: " + room.getSize());
-                                requireActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        TextView bookingText = new TextView(getContext());
-                                        LinearLayout reservationLayout = new LinearLayout(getContext());
-                                        reservationLayout.setOrientation(LinearLayout.HORIZONTAL);
-                                        ImageView roomImage = new ImageView(getContext());
+                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(350, 250);
+                                roomImage.setLayoutParams(params);
+                                String displayText = "Booking ID: " + res.bookingID + "\n" +
+                                        "Room ID: " + res.roomID + "\n" +
+                                        "Room Type: " + room.getType() + "\n" +
+                                        "Room Size: " + room.getSize() + "\n" +
+                                        "Check-in: " + res.checkIN + "\n" +
+                                        "Check-out: " + res.checkOUT + "\n" +
+                                        "Guests: " + res.guestCount;
 
-                                        // Set room image based on type
-                                        if (room.getSize().equals("King")) {
-                                            roomImage.setImageResource(R.drawable.king_room);
-                                        } else {
-                                            roomImage.setImageResource(R.drawable.queen_room);
-                                        }
+                                bookingText.setText(displayText);
+                                bookingText.setPadding(0, 0, 0, 100);
 
-                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(350, 250);
-                                        roomImage.setLayoutParams(params);
+                                LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
 
-                                        String displayText = "Booking ID: " + res.bookingID + "\n" +
-                                                "Room ID: " + res.roomID + "\n" +
-                                                "Room Type: " + room.getType() + "\n" +
-                                                "Room Size: " + room.getSize() + "\n" +
-                                                "Check-in: " + res.checkIN + "\n" +
-                                                "Check-out: " + res.checkOUT + "\n" +
-                                                "Guests: " + res.guestCount;
+                                bookingText.setLayoutParams(textParams);
 
-                                        bookingText.setText(displayText);
-                                        bookingText.setPadding(0, 0, 0, 100);
+                                reservationLayout.addView(bookingText);
+                                reservationLayout.addView(roomImage);
 
-                                        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-                                        bookingText.setLayoutParams(textParams);
+                                previousReservationsContainer.addView(reservationLayout);
 
-                                        reservationLayout.addView(bookingText);
-                                        reservationLayout.addView(roomImage);
-
-                                        previousReservationsContainer.addView(reservationLayout);
-                                    }
-                                });
                             }
                         });
                     }
-                }
+                });
             }
-        });
-
+        }
         return view;
     }
 }

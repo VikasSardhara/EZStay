@@ -29,11 +29,7 @@ def webhook():
                 payload, sig_header, endpoint_secret
             )
         except stripe.error.SignatureVerificationError as e:
-<<<<<<< HEAD
-            print('  Webhook signature verification failed.' + str(e))
-=======
             print('⚠️  Webhook signature verification failed.' + str(e))
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
             return jsonify(success=False)
 
     if event and event['type'] == 'payment_intent.succeeded':
@@ -52,11 +48,7 @@ def webhook():
 
     
         send_confirmation_email(to_email=email, guest_name=full_name, reservations=reservations)
-<<<<<<< HEAD
-        print(' Payment for {} succeeded'.format(payment_intent['amount']))
-=======
         print('✅ Payment for {} succeeded'.format(payment_intent['amount']))
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
 
     else:
         print('⚠️  Unhandled event type {}'.format(event['type']))
@@ -76,7 +68,6 @@ def send_confirmation_email(to_email, guest_name, reservations):
         room_Id = r.get('roomId', 'N/A')  
         check_in = r.get('check_in', 'N/A')
         check_out = r.get('check_out', 'N/A')
-        
 
         reservation_html += f"""
         <div style="margin-bottom: 20px;">

@@ -1,67 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-
-    <!-- Background image below toolbar -->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/dashboard_background" />
-
-    <!-- Overlay for readability -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- Reservation container -->
-        <LinearLayout
-            android:id="@+id/currentReservationsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingBottom="8dp" />
-
-        <!-- Total Price -->
-        <TextView
-            android:id="@+id/tvTotalPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total: $0"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:shadowColor="#000"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="2"
-            android:layout_gravity="end"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Proceed to Payment Button -->
-        <Button
-            android:id="@+id/btnPayFromCurrent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PROCEED TO PAYMENT"
-            android:background="@drawable/rounded_gradient_button"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="4dp" />
-    </LinearLayout>
-</RelativeLayout>
-=======
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -76,7 +13,10 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:paddingBottom="8dp" />
+        android:paddingBottom="8dp" >
+
+
+    </LinearLayout>
 
     <!-- Total Price -->
     <TextView
@@ -99,5 +39,14 @@
         android:backgroundTint="@color/purple_500"
         android:textColor="@android:color/white"
         android:layout_marginTop="4dp"/>
+
+    <Button
+        android:id="@+id/btnBackToCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:backgroundTint="@color/purple_500"
+        android:text="Cart"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60

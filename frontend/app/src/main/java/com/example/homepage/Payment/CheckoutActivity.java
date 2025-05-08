@@ -1,47 +1,37 @@
 package com.example.homepage.Payment;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import static com.example.homepage.USER.User.getInstance;
-
-import com.example.homepage.MainActivity;
-import com.example.homepage.USER.User;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.homepage.R;
-import com.example.homepage.USER.User;
-import com.example.homepage.utils.ConfirmedBookingManager;
-import com.example.homepage.utils.ReservationManager;
 import com.example.homepage.BOOKING.sendBooking;
+import com.example.homepage.MainActivity;
+import com.example.homepage.utils.BookingCart;
+import com.example.homepage.utils.ConfirmedBookingManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.stripe.android.paymentsheet.*;
 import com.stripe.android.PaymentConfiguration;
+import com.stripe.android.paymentsheet.PaymentSheet;
+import com.stripe.android.paymentsheet.PaymentSheetResult;
+import com.stripe.android.paymentsheet.PaymentSheetResultCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import com.example.homepage.utils.ConfirmedBookingManager;
 
 
 public class CheckoutActivity extends AppCompatActivity {
@@ -57,8 +47,6 @@ public class CheckoutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         super.onCreate(savedInstanceState);
 
         paymentSheet = new PaymentSheet(this, new PaymentSheetResultCallback() {
@@ -97,12 +85,11 @@ public class CheckoutActivity extends AppCompatActivity {
 
                     Intent i = getIntent();
 
-                    if(mUser != null) {
+                    if (mUser != null) {
                         jsonParam.put("first_name", getInstance().getFirstName());
                         jsonParam.put("last_name", getInstance().getLastName());
                         jsonParam.put("email", getInstance().getEmail());
-                    }
-                    else {
+                    } else {
                         jsonParam.put("first_name", i.getStringExtra("first_name"));
                         jsonParam.put("last_name", i.getStringExtra("last_name"));
                         jsonParam.put("email", i.getStringExtra("email"));
@@ -115,7 +102,8 @@ public class CheckoutActivity extends AppCompatActivity {
                         resJson.put("roomId", res.getReservation().getRoomId());
                         resJson.put("room_type", res.getReservation().getRoomType());
                         resJson.put("check_in", res.getReservation().getCheckInDate());
-                        resJson.put("check_out", res.getReservation().getCheckOutDate());;
+                        resJson.put("check_out", res.getReservation().getCheckOutDate());
+                        ;
                         resJson.put("guest_num", res.getReservation().getGuestCount());
 
                         Log.d("array", "hi" + res.getReservation().getRoomType());
@@ -148,10 +136,7 @@ public class CheckoutActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 try {
-                                    customerConfig = new PaymentSheet.CustomerConfiguration(
-                                            result.getString("customer"),
-                                            result.getString("ephemeralKey")
-                                    );
+                                    customerConfig = new PaymentSheet.CustomerConfiguration(result.getString("customer"), result.getString("ephemeralKey"));
                                     paymentIntentClientSecret = result.getString("paymentIntent");
                                     PaymentConfiguration.init(getApplicationContext(), result.getString("publishableKey"));
                                     presentPaymentSheet();
@@ -176,10 +161,7 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void presentPaymentSheet() {
-        PaymentSheet.Configuration configuration = new PaymentSheet.Configuration.Builder("EZSTAY CORP")
-                .customer(customerConfig)
-                .allowsDelayedPaymentMethods(true)
-                .build();
+        PaymentSheet.Configuration configuration = new PaymentSheet.Configuration.Builder("EZSTAY CORP").customer(customerConfig).allowsDelayedPaymentMethods(true).build();
         paymentSheet.presentWithPaymentIntent(paymentIntentClientSecret, configuration);
     }
 
@@ -194,25 +176,25 @@ public class CheckoutActivity extends AppCompatActivity {
             startActivity(i);
         } else if (paymentSheetResult instanceof PaymentSheetResult.Completed) {
             Log.d(TAG, "Payment completed successfully!");
+
+
+            int userId = getInstance().getUserID();
+
+            for (ConfirmedBookingManager.ConfirmedReservation res : ConfirmedBookingManager.getConfirmedBookings()) {
+                BookingCart.Reservation reservation = res.getReservation();
+                String checkInDate = new SimpleDateFormat("yyyy-MM-dd").format(reservation.getCheckInDate());
+                String checkOutDate = new SimpleDateFormat("yyyy-MM-dd").format(reservation.getCheckOutDate());
+                int roomId = reservation.getRoomId();
+                int numGuests = reservation.getGuestCount();
+
+                sendBooking.makeBooking(userId, roomId, checkInDate, checkOutDate, numGuests);
+                Log.d(TAG, "Sent booking for Room ID: " + roomId);
+            }
             ConfirmedBookingManager.clearConfirmedBookings();
 
-        /*    int userId = getInstance().getUserID();
-            int roomId = getIntent().getIntExtra("roomId", -1);
-            String checkInDate = getIntent().getStringExtra("checkInDate");
-            String checkOutDate = getIntent().getStringExtra("checkOutDate");
-            int numGuests = getIntent().getIntExtra("numGuests", 1);
 
-            sendBooking.makeBooking(userId, roomId, checkInDate, checkOutDate, numGuests);
-
-            Toast.makeText(this, "Booking confirmed!", Toast.LENGTH_LONG).show();
-            ConfirmedBookingManager.getConfirmedBookings().clear();
-*/
             Intent i = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(i);
         }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 54e63762880cba51b179e7b9d6c14d38264b3d60
