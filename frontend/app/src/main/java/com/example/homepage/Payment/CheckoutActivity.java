@@ -1,5 +1,6 @@
 package com.example.homepage.Payment;
 
+
 import static com.example.homepage.USER.User.getInstance;
 
 import android.content.Intent;
@@ -20,6 +21,7 @@ import com.stripe.android.PaymentConfiguration;
 import com.stripe.android.paymentsheet.PaymentSheet;
 import com.stripe.android.paymentsheet.PaymentSheetResult;
 import com.stripe.android.paymentsheet.PaymentSheetResultCallback;
+import com.example.homepage.ApiConfig;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,13 +60,18 @@ public class CheckoutActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         int amount = i.getIntExtra("amount", 0);
+        String guestFirstName = i.getStringExtra("first_name");
+        String guestLastName = i.getStringExtra("last_name");
+        String guestEmail = i.getStringExtra("email");
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("http://10.0.2.2:4242/payment-sheet");
+                    //URL url = new URL("http://192.168.0.35:4242/payment-sheet");
+                    URL url = new URL(ApiConfig.PAYMENTSHEET_URL);
+
                     Log.d("URL", "Accessing: " + url);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("POST");

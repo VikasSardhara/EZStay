@@ -1,6 +1,7 @@
 package com.example.homepage.USER;
 
 import android.util.Log;
+import com.example.homepage.ApiConfig;
 
 import org.json.JSONObject;
 
@@ -18,7 +19,10 @@ public class UserRegister {
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("http://10.0.2.2:5000/register");
+                    //URL url = new URL("http:///192.168.0.35:5000/register");
+                    //URL url = new URL(ApiConfig.BASE_BACKEND_URL+ "register");
+                    URL url = new URL(ApiConfig.REGISTER_URL);
+
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("POST");
                     urlConnection.setRequestProperty("Content-Type", "application/json");

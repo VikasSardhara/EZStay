@@ -27,6 +27,8 @@ import com.example.homepage.R;
 import com.example.homepage.cart.CartFragment;
 import com.example.homepage.utils.BookingCart;
 import com.example.homepage.utils.ReservationManager;
+import com.example.homepage.ApiConfig;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -153,7 +155,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchAndLockAvailableRoom(ArrayList<ReservationManager.Reservation> bookings, String roomType, String smokingPref) {
-        String url = "http://10.0.2.2:5000/rooms?size=" + roomType + "&type=" + smokingPref + "&guests=" + guestCount + "&check_in=" + formatDate(checkInCalendar) + "&check_out=" + formatDate(checkOutCalendar);
+        //String url = "http:///192.168.0.35:5000/rooms?size=" + roomType + "&type=" + smokingPref + "&guests=" + guestCount + "&check_in=" + formatDate(checkInCalendar) + "&check_out=" + formatDate(checkOutCalendar);
+        String url = ApiConfig.ROOMSIZE_URL + roomType + "&type=" + smokingPref + "&guests=" + guestCount + "&check_in=" + formatDate(checkInCalendar) + "&check_out=" + formatDate(checkOutCalendar);
+
+
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             try {
@@ -194,7 +199,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void lockRoom(int roomId) {
-        String url = "http://10.0.2.2:5000/lock";
+        //String url = "http://10.40.146.171:5000/lock";
+        String url = ApiConfig.LOCK_URL;
+
         JSONObject body = new JSONObject();
         try {
             body.put("room_id", roomId);

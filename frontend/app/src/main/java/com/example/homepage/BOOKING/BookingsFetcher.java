@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.example.homepage.ApiConfig;
 import com.example.homepage.utils.ReservationManager;
 
 import org.json.JSONArray;
@@ -29,7 +30,8 @@ public class BookingsFetcher {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             try {
-                URL url = new URL("http://10.0.2.2:5000/bookings/" + uID);
+                //URL url = new URL("http://192.168.0.35:5000/bookings" + uID);
+                URL url = new URL(ApiConfig.BOOKINGS_URL + uID);
                 Log.d("BookingsFetcher", "Requesting URL: " + url);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -99,7 +101,8 @@ public class BookingsFetcher {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             try {
-                URL url = new URL("http://10.0.2.2:5000/bookings");
+                //URL url = new URL("http://192.168.0.35:5000/bookings");
+                URL url = new URL(ApiConfig.BOOKINGS_URL);
                 Log.d("BookingsFetcher", "Requesting URL: " + url);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");

@@ -6,6 +6,8 @@ import ast
 
 from flask import Flask, jsonify, request
 
+print("webhook.py: Starting the EZStay Stripe Webhook API...")  # just reference for start.py
+
 stripe.api_key = 'sk_test_51R65YnFQK7HmrpDOZ8MhB8waSHJG8dnhtt4oJGfiaFbhRW79rQ3dyz42r6GQkvd54jxQyl0en2pq13btXYQxuX0B008fDthRBe'
 endpoint_secret = 'whsec_0zO4XvfTM1kJl1S6TrbfwuKgOZh3PL9D'
 

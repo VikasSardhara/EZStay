@@ -19,6 +19,7 @@ import com.example.homepage.dashboard.DashboardFragment;
 import com.example.homepage.utils.BookingCart;
 import com.example.homepage.utils.ConfirmedBookingManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.homepage.ApiConfig;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -92,7 +93,9 @@ public class CartFragment extends Fragment {
                     String checkOut = sdf.format(res.getCheckOutDate());
                     int roomId = res.getRoomId();
 
-                    String unlockUrl = "http://10.0.2.2:5000/lock?room_id=" + roomId + "&check_in=" + checkIn + "&check_out=" + checkOut;
+                    //String unlockUrl = "http:///192.168.0.35:5000/lock?room_id=" + roomId + "&check_in=" + checkIn + "&check_out=" + checkOut;
+                    String unlockUrl = ApiConfig.LOCKROOMID_URL + roomId + "&check_in=" + checkIn + "&check_out=" + checkOut;
+
                     RequestQueue queue = Volley.newRequestQueue(requireContext());
 
                     StringRequest deleteRequest = new StringRequest(

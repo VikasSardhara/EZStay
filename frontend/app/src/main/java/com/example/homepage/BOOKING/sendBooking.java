@@ -4,6 +4,8 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import com.example.homepage.ApiConfig;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +16,9 @@ public class sendBooking {
             HttpURLConnection urlConnection = null;
 
             try {
-                URL url = new URL("http://10.0.2.2:5000/book");  // change IP as needed
+                //URL url = new URL("http://192.168.0.35:5000/book");// change IP as needed
+                URL url = new URL(ApiConfig.BOOK_URL);
+
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json");

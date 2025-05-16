@@ -2,6 +2,8 @@ package com.example.homepage.ROOM;
 
 import android.util.Log;
 
+import com.example.homepage.ApiConfig;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,7 +22,8 @@ public class RoomSearch {
                 HttpURLConnection urlConnection = null;
                 try {
                     String roomIdEncoded = URLEncoder.encode(String.valueOf(roomId), StandardCharsets.UTF_8);
-                    URL url = new URL("http://10.0.2.2:5000/rooms?room_id=" + roomIdEncoded);
+                    //URL url = new URL("http://10.40.146.171:5000/rooms?room_id=" + roomIdEncoded);
+                    URL url = new URL(ApiConfig.ROOMSIZE_URL + roomIdEncoded);
                     Log.d("RoomSearch", "Accessing: " + url.toString());
 
                     // Open the connection

@@ -12,10 +12,18 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.homepage.ApiConfig;
 import com.example.homepage.R;
 import com.example.homepage.USER.DOBPicker;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Register extends AppCompatActivity {
 
@@ -28,7 +36,6 @@ public class Register extends AppCompatActivity {
     FirebaseAuth mAuth;
     TextView loginButton;
     TextInputEditText editTextDOB;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +69,7 @@ public class Register extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), Register2.class);
                 String firstNameText = String.valueOf(editTextfirstName.getText());
-                String lastNameText = String.valueOf(editTextlastName.getText()); //was double first name
+                String lastNameText = String.valueOf(editTextlastName.getText());
                 String email = String.valueOf(editTextEmail.getText());
                 String dob = String.valueOf(editTextDOB.getText());
 
@@ -75,6 +82,8 @@ public class Register extends AppCompatActivity {
                     Toast.makeText(Register.this, "Please enter full name", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                sendUserToBackend(firstNameText + " " + lastNameText, email, dob);
 
                 intent.putExtra("first_name", firstNameText);
                 intent.putExtra("last_name", lastNameText);
@@ -93,7 +102,31 @@ public class Register extends AppCompatActivity {
                 finish();
             }
         });
+    }
 
+    private void sendUserToBackend(String fullName, String email, String dob) {
+        try {
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("name", fullName);
+            jsonBody.put("email", email);
+            jsonBody.put("dob", dob);
+
+            //String registerUrl = "http://192.168.1.117:5000/register";
+            //String registerUrl = ApiConfig.BASE_URL + "register";
+            String registerUrl = ApiConfig.REGISTER_URL;//
+
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.POST,
+                    registerUrl,
+                    jsonBody,
+                    response -> Toast.makeText(Register.this, "User registered successfully in backend", Toast.LENGTH_SHORT).show(),
+                    error -> Toast.makeText(Register.this, "Failed to save user in backend", Toast.LENGTH_SHORT).show()
+            );
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            queue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
-

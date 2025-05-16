@@ -18,6 +18,9 @@ from routes.bookings import bookings_bp
 from routes.users import users_bp
 import os
 
+
+print("app.py: Starting the EZStay Backend API...") #just reference for start.py
+
 app = Flask(__name__)
 CORS(app)
 

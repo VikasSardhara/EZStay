@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 import stripe
 import json
 
+print("EZStripe.py: Starting the EZStay Stripe Payment API...")  # just reference for start.py
+
 app = Flask(__name__)
 stripe.api_key = 'sk_test_51R65YnFQK7HmrpDOZ8MhB8waSHJG8dnhtt4oJGfiaFbhRW79rQ3dyz42r6GQkvd54jxQyl0en2pq13btXYQxuX0B008fDthRBe'
 

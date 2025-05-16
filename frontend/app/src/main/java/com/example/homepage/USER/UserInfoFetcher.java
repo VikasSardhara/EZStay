@@ -1,5 +1,5 @@
 package com.example.homepage.USER;
-
+import com.example.homepage.ApiConfig;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,7 +20,10 @@ public class UserInfoFetcher {
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("http://10.0.2.2:5000/users/" + URLEncoder.encode(email, StandardCharsets.UTF_8));
+                    //URL url = new URL("http:///192.168.0.35:5000/users/" + URLEncoder.encode(email, StandardCharsets.UTF_8));
+                    //URL url = new URL(ApiConfig.BASE_BACKEND_URL + "users/" + URLEncoder.encode(email, StandardCharsets.UTF_8));
+                    URL url = new URL(ApiConfig.USERS_URL + URLEncoder.encode(email, StandardCharsets.UTF_8));
+
                     Log.d("URL", "Accessing: " + url.toString());
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("GET");
