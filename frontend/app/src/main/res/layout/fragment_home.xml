@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/home_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,8 +32,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Select Check-In Date"
-                    android:backgroundTint="@color/purple_500"
-                    android:textColor="@android:color/white" />
+                    android:background="@drawable/rounded_button"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false" />
 
                 <TextView
                     android:id="@+id/tvCheckInDate"
@@ -58,8 +60,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Select Check-Out Date"
-                    android:backgroundTint="@color/purple_500"
-                    android:textColor="@android:color/white" />
+                    android:background="@drawable/rounded_button"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false" />
 
                 <TextView
                     android:id="@+id/tvCheckOutDate"
@@ -125,7 +128,10 @@
                 android:id="@+id/btnDecreaseGuests"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="-" />
+                android:text="-"
+                android:background="@drawable/rounded_button"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false" />
 
             <TextView
                 android:id="@+id/tvGuestCount"
@@ -139,17 +145,21 @@
                 android:id="@+id/btnIncreaseGuests"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="+"/>
+                android:text="+"
+                android:background="@drawable/rounded_button"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false"/>
         </LinearLayout>
 
-        <!-- Buttons -->
+        <!-- Book Now Button -->
         <Button
             android:id="@+id/btnBookNow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Book Now"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/purple_500"
-            android:textColor="@android:color/white"/>
+            android:background="@drawable/rounded_button"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"/>
     </LinearLayout>
 </ScrollView>

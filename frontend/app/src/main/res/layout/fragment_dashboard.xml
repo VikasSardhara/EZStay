@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="@drawable/dashboard_background">
 
     <!-- Reservation container -->
     <LinearLayout
@@ -13,10 +13,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:paddingBottom="8dp" >
-
-
-    </LinearLayout>
+        android:paddingBottom="8dp" />
 
     <!-- Total Price -->
     <TextView
@@ -36,17 +33,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="PROCEED TO PAYMENT"
-        android:backgroundTint="@color/purple_500"
+        android:background="@drawable/rounded_button"
         android:textColor="@android:color/white"
-        android:layout_marginTop="4dp"/>
+        android:textAllCaps="false"
+        android:layout_marginTop="4dp" />
 
     <Button
         android:id="@+id/btnBackToCart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:backgroundTint="@color/purple_500"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_button"
         android:text="Cart"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:textAllCaps="false" />
 
 </LinearLayout>

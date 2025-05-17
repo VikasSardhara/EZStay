@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="4dp">
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="@android:color/white">
 
         <!-- Reservation Details -->
         <TextView
@@ -34,7 +35,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="12dp" />
 
-        <!-- Action Buttons -->
+        <!-- Action Button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,10 +48,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="REMOVE"
-                android:backgroundTint="@android:color/holo_red_dark"
+                android:background="@drawable/rounded_button_red"
                 android:textColor="@android:color/white"
-                android:layout_marginEnd="4dp" />
-
+                android:textAllCaps="false" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

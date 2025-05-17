@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:text="Reservation details"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingBottom="8dp" />
+        android:paddingBottom="8dp"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/tvReservationPrice"
@@ -37,8 +38,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="REMOVE"
-            android:backgroundTint="@color/purple_500"
+            android:background="@drawable/rounded_button"
             android:textColor="@android:color/white"
+            android:textAllCaps="false"
             android:layout_marginEnd="4dp" />
 
         <Button
@@ -47,10 +49,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="CONFIRM"
-            android:backgroundTint="@color/purple_500"
+            android:background="@drawable/rounded_button"
             android:textColor="@android:color/white"
-            android:layout_marginEnd="4dp" />
-
+            android:textAllCaps="false"
+            android:layout_marginStart="4dp" />
     </LinearLayout>
 
 </LinearLayout>

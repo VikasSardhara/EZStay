@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/register_background">
 
     <TextView
         android:id="@+id/create_account_display"
@@ -22,7 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.121" />
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/first_name_layout"
@@ -71,7 +71,6 @@
             android:hint="Last name"
             android:textColorHighlight="#FFFFFF" />
     </com.google.android.material.textfield.TextInputLayout>
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email_layout"
@@ -132,6 +131,9 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="Next"
+        android:background="@drawable/rounded_button"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -183,4 +185,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/next_button"
         app:layout_constraintVertical_bias="0.281" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
